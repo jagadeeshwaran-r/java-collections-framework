@@ -1,0 +1,172 @@
+package com.util.collections.list;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
+public class LinkedList<T> extends AbstractList<T> {
+
+    //==================== Inner class for representing a node of this LinkedList ===========//
+    static final class Node<T> {
+        private final T data;
+        private Node<T> next;
+
+        public Node(T data) {
+            this.data = data;
+        }
+    }
+    //=======================================================================================//
+
+    //==================== FIELDS OF LINKED LIST ============================================//
+    private Node<T> head;
+    private Node<T> tail;
+    private int count = 0;
+    private final boolean isAllowNull;
+    //=======================================================================================//
+
+    //==================== CONSTRUCTOR'S ====================================================//
+    public LinkedList() {
+        isAllowNull = false;
+    }
+
+    public LinkedList(boolean isAllowNull) {
+        this.isAllowNull = isAllowNull;
+    }
+    //=======================================================================================//
+
+    private void linkLast(T data) {
+        if (!isAllowNull && Objects.isNull(data)) {
+            throw new IllegalArgumentException("LinkedList doesn't allow null value");
+        }
+
+        Node<T> newNode = new Node<>(data);
+        if (head == null) {
+            head = newNode;
+        } else {
+            tail.next = newNode;
+        }
+        tail = newNode;
+        count++;
+    }
+
+    private void linkFirst(T data) {
+        if (!isAllowNull && Objects.isNull(data)) {
+            throw new IllegalArgumentException("LinkedList doesn't allow null value");
+        }
+
+        Node<T> newNode = new Node<>(data);
+        if (head == null) {
+            head = new Node<>(data);
+        } else {
+            newNode.next = head;
+            head = newNode;
+        }
+        count++;
+    }
+
+    @Override
+    public boolean add(T val) {
+        linkLast(val);
+        return true;
+    }
+
+    @Override
+    public boolean add(T val, int index) {
+        return false;
+    }
+
+    @Override
+    public T get(int index) {
+        return null;
+    }
+
+    @Override
+    public boolean remove(T val) {
+        if (Objects.isNull(head))
+            return false;
+        if (Objects.equals(head.data, val)) {
+            head = head.next;
+            count--;
+            return true;
+        }
+        Node<T> prev = head;
+        Node<T> current = head.next;
+        while (current != null) {
+            if (Objects.equals(current.data, val)) {
+                prev.next = current.next;
+                count--;
+                return true;
+            } else {
+                prev = current;
+                current = current.next;
+            }
+        }
+        return false;
+    }
+
+    //==================== Search Operations ====================================================//
+    @Override
+    public boolean contains(Object val) {
+        if (!isAllowNull && val == null)
+            return false;
+        Node<T> current = head;
+        while (current != null) {
+            if (Objects.equals(current.data, val)) {
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
+    }
+    //===========================================================================================//
+    @Override
+    public int size() {
+        return count;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return count == 0;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new LinkedListIterator();
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    //=============================== LINKED LIST ITERATOR ==========================================//
+    private class LinkedListIterator implements Iterator<T> {
+        Node<T> currentNode = head;
+
+        @Override
+        public boolean hasNext() {
+            return currentNode != null;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            T data = currentNode.data;
+            currentNode = currentNode.next;
+            return data;
+        }
+    }
+    //===============================================================================================//
+}
