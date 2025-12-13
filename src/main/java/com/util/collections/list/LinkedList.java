@@ -56,7 +56,7 @@ public class LinkedList<T> extends AbstractList<T> {
 
         Node<T> newNode = new Node<>(data);
         if (head == null) {
-            head = new Node<>(data);
+            head = newNode;
         } else {
             newNode.next = head;
             head = newNode;
