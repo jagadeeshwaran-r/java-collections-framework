@@ -55,12 +55,10 @@ public class LinkedList<T> extends AbstractList<T> {
         }
 
         Node<T> newNode = new Node<>(data);
-        if (head == null) {
-            head = newNode;
-        } else {
+        if (head != null) {
             newNode.next = head;
-            head = newNode;
         }
+        head = newNode;
         count++;
     }
 
@@ -75,9 +73,27 @@ public class LinkedList<T> extends AbstractList<T> {
         return false;
     }
 
+    private boolean isValidIndex(int index) {
+        return index >= 0 && index < count;
+    }
+
+    private void checkIndex(int index) {
+        if (!isValidIndex(index)) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + count);
+        }
+    }
+
     @Override
     public T get(int index) {
-        return null;
+        checkIndex(index);
+
+        Node<T> current = head;
+        int pos = 0;
+        while (pos != index) {
+            current = current.next;
+            pos++;
+        }
+        return current.data;
     }
 
     @Override
@@ -170,3 +186,4 @@ public class LinkedList<T> extends AbstractList<T> {
     }
     //===============================================================================================//
 }
+
