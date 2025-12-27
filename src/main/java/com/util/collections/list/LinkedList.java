@@ -60,7 +60,6 @@ public class LinkedList<T> extends AbstractList<T> {
         if (tail == null) {
             tail = head;
         }
-        head = newNode;
         count++;
     }
 
