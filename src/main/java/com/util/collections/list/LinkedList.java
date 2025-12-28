@@ -69,9 +69,46 @@ public class LinkedList<T> extends AbstractList<T> {
         return true;
     }
 
+    private void checkIsInsertable(int index) {
+        if (!isInInsertableBoundary(index)) {
+            throwIndexOutOfBoundException(index);
+        }
+    }
+
+    private boolean isInInsertableBoundary(int index) {
+        return index >= 0 && index <= count;
+    }
+
+    private void throwIndexOutOfBoundException(int index) {
+        throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + count);
+    }
+
+    private void insertAt(T val, int index) {
+        checkIsInsertable(index);
+
+        if (index == 0) {
+            linkFirst(val);
+            return;
+        }
+        if (index == count) {
+            linkLast(val);
+            return;
+        }
+
+        Node<T> newNode = new Node<>(val);
+        Node<T> currNode = head;
+        for (int i = 1; i < index; i++) {
+            currNode = currNode.next;
+        }
+        newNode.next = currNode.next;
+        currNode.next = newNode;
+        count++;
+    }
+
     @Override
     public boolean add(T val, int index) {
-        return false;
+        insertAt(val, index);
+        return true;
     }
 
     private boolean isValidIndex(int index) {
