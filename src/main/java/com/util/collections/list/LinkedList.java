@@ -8,7 +8,7 @@ public class LinkedList<T> extends AbstractList<T> {
 
     //==================== Inner class for representing a node of this LinkedList ===========//
     static final class Node<T> {
-        private final T data;
+        private T data;
         private Node<T> next;
 
         public Node(T data) {
@@ -181,6 +181,20 @@ public class LinkedList<T> extends AbstractList<T> {
     @Override
     public boolean isEmpty() {
         return count == 0;
+    }
+
+    @Override
+    public void clear() {
+        Node <T> current=head;
+       while (current != null) {
+           Node<T> next=current.next;
+          current.next = null;
+          current.data = null;
+          current = next;
+       }
+        head=null;
+        tail=null;
+        count=0;
     }
 
     @Override
