@@ -161,7 +161,7 @@ public class LinkedList<T> extends AbstractList<T> {
     //==================== Search Operations ====================================================//
     @Override
     public boolean contains(Object val) {
-        if (!isAllowNull && val == null)
+        if (isAllowNull && val == null)
             return false;
         Node<T> current = head;
         while (current != null) {
