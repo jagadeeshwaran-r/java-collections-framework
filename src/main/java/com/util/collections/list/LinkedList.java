@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class LinkedList<T> extends AbstractList<T> {
 
-    //==================== Inner class for representing a node of this LinkedList ===========//
+    //==================== Inner class for representing node of this LinkedList ===========//
     static final class Node<T> {
         private T data;
         private Node<T> next;
@@ -20,120 +20,17 @@ public class LinkedList<T> extends AbstractList<T> {
     //==================== FIELDS OF LINKED LIST ============================================//
     private Node<T> head;
     private Node<T> tail;
-    private int count = 0;
-    private final boolean isAllowNull;
     //=======================================================================================//
 
-    //==================== CONSTRUCTOR'S ====================================================//
     public LinkedList() {
-        isAllowNull = false;
+        super(true);
     }
 
-    public LinkedList(boolean isAllowNull) {
-        this.isAllowNull = isAllowNull;
-    }
-    //=======================================================================================//
-
-    private void linkLast(T data) {
-        if (!isAllowNull && Objects.isNull(data)) {
-            throw new IllegalArgumentException("LinkedList doesn't allow null value");
-        }
-
-        Node<T> newNode = new Node<>(data);
-        if (head == null) {
-            head = newNode;
-        } else {
-            tail.next = newNode;
-        }
-        tail = newNode;
-        count++;
+    public LinkedList(boolean isNullable) {
+        super(isNullable);
     }
 
-    private void linkFirst(T data) {
-        if (!isAllowNull && Objects.isNull(data)) {
-            throw new IllegalArgumentException("LinkedList doesn't allow null value");
-        }
-
-        Node<T> newNode = new Node<>(data);
-        newNode.next = head;
-        head = newNode;
-        if (tail == null) {
-            tail = head;
-        }
-        count++;
-    }
-
-    @Override
-    public boolean add(T val) {
-        linkLast(val);
-        return true;
-    }
-
-    private void checkIsInsertable(int index) {
-        if (!isInInsertableBoundary(index)) {
-            throwIndexOutOfBoundException(index);
-        }
-    }
-
-    private boolean isInInsertableBoundary(int index) {
-        return index >= 0 && index <= count;
-    }
-
-    private void throwIndexOutOfBoundException(int index) {
-        throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + count);
-    }
-
-    private void insertAt(T val, int index) {
-        checkIsInsertable(index);
-
-        if (index == 0) {
-            linkFirst(val);
-            return;
-        }
-        if (index == count) {
-            linkLast(val);
-            return;
-        }
-
-        Node<T> newNode = new Node<>(val);
-        Node<T> currNode = head;
-        for (int i = 1; i < index; i++) {
-            currNode = currNode.next;
-        }
-        newNode.next = currNode.next;
-        currNode.next = newNode;
-        count++;
-    }
-
-    @Override
-    public boolean add(T val, int index) {
-        insertAt(val, index);
-        return true;
-    }
-
-    private boolean isValidIndex(int index) {
-        return index >= 0 && index < count;
-    }
-
-    private void checkIndex(int index) {
-        if (!isValidIndex(index)) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + count);
-        }
-    }
-
-    @Override
-    public T get(int index) {
-        checkIndex(index);
-
-        Node<T> current = head;
-        int pos = 0;
-        while (pos != index) {
-            current = current.next;
-            pos++;
-        }
-        return current.data;
-    }
-
+    //==================== Removal Operations ====================================================//
     @Override
     public boolean remove(T val) {
         if (Objects.isNull(head))
@@ -158,10 +55,25 @@ public class LinkedList<T> extends AbstractList<T> {
         return false;
     }
 
+    @Override
+    public void clear() {
+        Node<T> current = head;
+        while (current != null) {
+            Node<T> next = current.next;
+            current.next = null;
+            current.data = null;
+            current = next;
+        }
+        head = null;
+        tail = null;
+        count = 0;
+    }
+    // ===========================================================================================//
+
     //==================== Search Operations ====================================================//
     @Override
     public boolean contains(Object val) {
-        if (!isAllowNull && val == null)
+        if (!isNullable && val == null)
             return false;
         Node<T> current = head;
         while (current != null) {
@@ -172,7 +84,84 @@ public class LinkedList<T> extends AbstractList<T> {
         }
         return false;
     }
-    //===========================================================================================//
+
+    @Override
+    public T get(int index) {
+        checkIndex(index);
+
+        Node<T> current = head;
+        int pos = 0;
+        while (pos != index) {
+            current = current.next;
+            pos++;
+        }
+        return current.data;
+    }
+    // ===========================================================================================//
+
+    //====================== Add Operations =====================================================//
+
+    @Override
+    public boolean add(T val) {
+        linkLast(val);
+        return true;
+    }
+
+    @Override
+    public boolean add(T val, int index) {
+        insertAt(val, index);
+        return true;
+    }
+
+    private void linkLast(T data) {
+        checkNullAllowed(data);
+
+        Node<T> newNode = new Node<>(data);
+        if (head == null) {
+            head = newNode;
+        } else {
+            tail.next = newNode;
+        }
+        tail = newNode;
+        count++;
+    }
+
+    private void linkFirst(T data) {
+        checkNullAllowed(data);
+
+        Node<T> newNode = new Node<>(data);
+        newNode.next = head;
+        head = newNode;
+        if (tail == null) {
+            tail = head;
+        }
+        count++;
+    }
+
+    private void insertAt(T val, int index) {
+        checkNullAllowed(val);
+        checkIsInsertable(index);
+
+        if (index == 0) {
+            linkFirst(val);
+            return;
+        }
+        if (index == count) {
+            linkLast(val);
+            return;
+        }
+
+        Node<T> newNode = new Node<>(val);
+        Node<T> currNode = head;
+        for (int i = 1; i < index; i++) {
+            currNode = currNode.next;
+        }
+        newNode.next = currNode.next;
+        currNode.next = newNode;
+        count++;
+    }
+
+    // ===========================================================================================//
     @Override
     public int size() {
         return count;
@@ -184,37 +173,8 @@ public class LinkedList<T> extends AbstractList<T> {
     }
 
     @Override
-    public void clear() {
-        Node <T> current=head;
-       while (current != null) {
-           Node<T> next=current.next;
-          current.next = null;
-          current.data = null;
-          current = next;
-       }
-        head=null;
-        tail=null;
-        count=0;
-    }
-
-    @Override
     public Iterator<T> iterator() {
         return new LinkedListIterator();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
     }
 
     //=============================== LINKED LIST ITERATOR ==========================================//
