@@ -98,7 +98,6 @@ public interface List<T> extends Iterable<T> {
      */
     boolean add(T val, int index);
 
-    T set(int index, T val);
     /**
      * Returns the element at the specified position in this list.
      *

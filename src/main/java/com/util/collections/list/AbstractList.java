@@ -91,7 +91,7 @@ abstract class AbstractList<T> implements List<T> {
      * @param index the index to validate
      * @throws IndexOutOfBoundsException if the index is invalid
      */
-    protected void checkIndexOrElseThrow(int index) {
+    protected void checkIndex(int index) {
         if (!isValidIndex(index)) {
             throwIndexOutOfBoundException(index);
         }

@@ -297,8 +297,22 @@ public class LinkedList<T> extends AbstractList<T> {
             return false;
         }
 
-        Node<T> current = head;
-        while (current != null) {
+        // Empty list
+        if (head == null) {
+            return false;
+        }
+
+        // Optimistic O(1) checks
+        if (Objects.equals(head.data, val)) {
+            return true;
+        }
+        if (Objects.equals(tail.data, val)) {
+            return true;
+        }
+
+        // Linear scan excluding head and tail
+        Node<T> current = head.next;
+        while (current != tail) {
             if (Objects.equals(current.data, val)) {
                 return true;
             }
@@ -312,7 +326,7 @@ public class LinkedList<T> extends AbstractList<T> {
      *
      * <p><strong>Index Semantics:</strong>
      * Indices are zero-based. The valid range is {@code [0, size() - 1]}.
-     * Index validation is delegated to {@link #checkIndexOrElseThrow(int)}.
+     * Index validation is delegated to {@link #checkIndex(int)}.
      *
      * <p><strong>Behavior:</strong>
      * This operation performs a forward traversal starting from {@code head}
@@ -346,7 +360,7 @@ public class LinkedList<T> extends AbstractList<T> {
      */
     @Override
     public T get(int index) {
-        checkIndexOrElseThrow(index);
+        checkIndex(index);
 
         Node<T> current = head;
         int pos = 0;
@@ -542,28 +556,7 @@ public class LinkedList<T> extends AbstractList<T> {
         count++;
     }
 
-    @Override
-    public T set(int index, T val) {
-        checkNullAllowed(val);
-        Node<T> node = getNodeAt(index);
-        T oldValue = node.data;
-        node.data = val;
-        return oldValue;
-    }
-
-    private Node<T> getNodeAt(int index) {
-        checkIndexOrElseThrow(index);
-        if (index == count - 1) {
-            return tail;
-        }
-        Node<T> currentNode = head;
-        for (int i = 0; i < index; i++) {
-            currentNode = currentNode.next;
-        }
-        return currentNode;
-    }
     // ===========================================================================================//
-
     @Override
     public int size() {
         return count;
