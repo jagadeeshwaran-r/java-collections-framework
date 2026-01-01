@@ -260,4 +260,32 @@ public interface List<T> extends Iterable<T> {
      *         element removal
      */
     void clear();
+
+    /**
+     * Replaces the element at the specified position in this list with the given value.
+     *
+     * <p>This operation updates the element stored at the provided index without
+     * altering the size, order, or structural layout of the list.</p>
+     *
+     * <p>The method returns the element previously associated with the specified
+     * position, allowing callers to observe the prior state.</p>
+     *
+     * @param index the zero-based position of the element to replace
+     * @param val   the new element to be stored at the specified position
+     * @return the element previously stored at the specified index
+     *
+     * @throws IndexOutOfBoundsException if {@code index < 0 || index >= size()}
+     * @throws NullPointerException if {@code val} is {@code null} and null values
+     *         are not permitted by this list implementation
+     *
+     * @implNote
+     * This method is non-structural and does not change the list size.
+     * Implementations may use different access strategies depending on their
+     * underlying data structure.
+     *
+     * @complexity
+     * Time Complexity: implementation-dependent
+     * Space Complexity: O(1)
+     */
+    T set(int index, T val);
 }
