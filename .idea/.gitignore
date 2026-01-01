@@ -1,0 +1,50 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Environment-dependent path to Maven home directory
+/mavenHomeManager.xml
+
+# =========================
+# Build output
+# =========================
+/target/
+out/
+
+# =========================
+# IntelliJ IDEA
+# =========================
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# =========================
+# Maven specific
+# =========================
+.mvn/
+logs/
+dependency-reduced-pom.xml
+release.properties
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+*.log
+*.tmp
+*.bak
+
+# Surefire reports (JUnit/Maven test results)
+target/surefire-reports/
+target/failsafe-reports/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Eclipse (optional if you use Eclipse in future)
+# =========================
+.classpath
+.project
+.settings/
