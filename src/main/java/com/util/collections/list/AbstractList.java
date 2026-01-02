@@ -3,59 +3,72 @@ package com.util.collections.list;
 import java.util.Objects;
 
 /**
- * Abstract base class for list implementations providing common validation,
- * boundary checking, and null-handling policies.
+ * Abstract base class for {@link List} implementations that centralizes
+ * validation logic, boundary enforcement, and null-handling policies.
  *
- * <p><strong>Purpose:</strong>
- * This class centralizes cross-cutting concerns that are common to all list
- * implementations, such as:
+ * <h2>Purpose</h2>
+ * <p>
+ * This class consolidates cross-cutting concerns common to all list
+ * implementations, including:
+ * </p>
  * <ul>
  *   <li>Index boundary validation</li>
- *   <li>Insert-position validation</li>
+ *   <li>Insertion position validation</li>
  *   <li>Nullability enforcement</li>
- *   <li>Size tracking</li>
+ *   <li>Element count tracking</li>
  * </ul>
- * Concrete subclasses are responsible solely for structural storage and
- * traversal logic.
  *
- * <p><strong>State Ownership:</strong>
+ * <p>
+ * Concrete subclasses are responsible exclusively for structural storage,
+ * traversal mechanics, and node management.
+ * </p>
+ *
+ * <h2>State Ownership</h2>
  * <ul>
  *   <li>{@code count} represents the number of elements currently stored</li>
  *   <li>{@code isNullable} defines whether {@code null} elements are permitted</li>
  * </ul>
  *
- * <p><strong>Index Semantics:</strong>
+ * <h2>Index Semantics</h2>
  * <ul>
- *   <li>Valid access indices are in the range {@code [0, count - 1]}</li>
- *   <li>Valid insertion indices are in the range {@code [0, count]}</li>
+ *   <li>Valid access indices lie in the range {@code [0, count - 1]}</li>
+ *   <li>Valid insertion indices lie in the range {@code [0, count]}</li>
  * </ul>
  *
- * <p><strong>Design Philosophy:</strong>
+ * <h2>Design Philosophy</h2>
+ * <p>
  * This abstraction enforces correctness through explicit precondition checks
- * rather than defensive programming in each concrete implementation. By
- * consolidating validation logic here, subclasses remain simpler, safer, and
- * easier to reason about.
+ * rather than duplicating defensive logic in each concrete implementation.
+ * Centralizing validation improves consistency, safety, and maintainability.
+ * </p>
  *
- * <p><strong>Thread Safety:</strong>
- * This class is not thread-safe. External synchronization is required if
- * instances are accessed concurrently.
+ * <h2>Thread Safety</h2>
+ * <p>
+ * This class is <strong>not thread-safe</strong>. External synchronization is
+ * required if instances are accessed concurrently.
+ * </p>
  *
+ * @param <T> the type of elements maintained by this list
  */
 abstract class AbstractList<T> implements List<T> {
 
     /**
      * The number of elements currently contained in the list.
      *
-     * <p>This value is maintained by concrete subclasses and must accurately
-     * reflect the number of structurally linked elements.</p>
+     * <p>
+     * This value must accurately reflect the number of structurally linked
+     * elements and is maintained by concrete subclasses.
+     * </p>
      */
     protected int count = 0;
 
     /**
      * Indicates whether {@code null} elements are permitted in this list.
      *
-     * <p>This policy is immutable and enforced consistently across all
-     * mutating operations.</p>
+     * <p>
+     * This policy is immutable and enforced consistently across all mutating
+     * operations.
+     * </p>
      */
     protected final boolean isNullable;
 
@@ -72,10 +85,12 @@ abstract class AbstractList<T> implements List<T> {
     /**
      * Validates whether the specified index is a legal insertion position.
      *
-     * <p>A valid insertion index lies in the inclusive range {@code [0, count]}.</p>
+     * <p>
+     * A valid insertion index lies in the inclusive range {@code [0, count]}.
+     * </p>
      *
      * @param index the index to validate
-     * @throws IndexOutOfBoundsException if the index is invalid
+     * @throws IndexOutOfBoundsException if the index is outside the valid range
      */
     protected void checkIsInsertable(int index) {
         if (!isInInsertableBoundary(index)) {
@@ -86,7 +101,9 @@ abstract class AbstractList<T> implements List<T> {
     /**
      * Validates whether the specified index refers to an existing element.
      *
-     * <p>A valid access index lies in the range {@code [0, count - 1]}.</p>
+     * <p>
+     * A valid access index lies in the range {@code [0, count - 1]}.
+     * </p>
      *
      * @param index the index to validate
      * @throws IndexOutOfBoundsException if the index is invalid
@@ -101,7 +118,8 @@ abstract class AbstractList<T> implements List<T> {
      * Determines whether the specified index is within the legal insertion bounds.
      *
      * @param index the index to test
-     * @return {@code true} if the index is in {@code [0, count]}, {@code false} otherwise
+     * @return {@code true} if the index is in {@code [0, count]};
+     *         {@code false} otherwise
      */
     protected boolean isInInsertableBoundary(int index) {
         return index >= 0 && index <= count;
@@ -111,7 +129,8 @@ abstract class AbstractList<T> implements List<T> {
      * Determines whether the specified index refers to an existing element.
      *
      * @param index the index to test
-     * @return {@code true} if the index is in {@code [0, count - 1]}, {@code false} otherwise
+     * @return {@code true} if the index is in {@code [0, count - 1]};
+     *         {@code false} otherwise
      */
     protected boolean isValidIndex(int index) {
         return index >= 0 && index < count;
@@ -120,8 +139,10 @@ abstract class AbstractList<T> implements List<T> {
     /**
      * Throws a standardized {@link IndexOutOfBoundsException} for the given index.
      *
-     * <p>This method centralizes exception formatting to ensure consistent
-     * error messages across all list implementations.</p>
+     * <p>
+     * Centralizing exception formatting ensures consistent diagnostics across
+     * all list implementations.
+     * </p>
      *
      * @param index the invalid index
      * @throws IndexOutOfBoundsException always
@@ -131,17 +152,78 @@ abstract class AbstractList<T> implements List<T> {
     }
 
     /**
-     * Enforces the list's nullability policy for a given element.
-     *
-     * <p>If {@code isNullable == false}, passing {@code null} will result in
-     * an {@link IllegalArgumentException}.</p>
+     * Enforces the list's nullability policy for the specified element.
      *
      * @param data the element to validate
      * @throws IllegalArgumentException if {@code null} is not permitted
      */
     protected void checkNullAllowed(T data) {
         if (!isNullable && Objects.isNull(data)) {
-            throw new IllegalArgumentException("List doesn't allow null value");
+            throw new IllegalArgumentException("List does not allow null values");
         }
+    }
+
+    /**
+     * Determines whether this list contains an element equal to the specified value.
+     *
+     * <p>
+     * Equality comparison is performed using {@link Objects#equals(Object, Object)}
+     * to safely support nullable elements when permitted by the list's policy.
+     * </p>
+     *
+     * <h3>Performance Characteristics</h3>
+     * <ul>
+     *   <li>Best case: {@code O(1)}</li>
+     *   <li>Worst case: {@code O(n)}</li>
+     * </ul>
+     *
+     * <p>
+     * This method does not modify the list and preserves all structural invariants.
+     * </p>
+     *
+     * @param val the value whose presence is to be tested
+     * @return {@code true} if an equal element exists; {@code false} otherwise
+     */
+    @Override
+    public boolean contains(T val) {
+        if (!isNullable && val == null) {
+            return false;
+        }
+        for (T v : this) {
+            if (Objects.equals(v, val)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * This implementation iterates over the provided {@link Iterable} and verifies
+     * that each element is present in this list. Containment checks are delegated
+     * to {@link #contains(Object)} to preserve consistent equality semantics and
+     * null-handling behavior.
+     * </p>
+     *
+     * <p>
+     * The method employs a fail-fast strategy and returns {@code false} immediately
+     * upon detecting a missing element.
+     * </p>
+     *
+     * @implNote
+     * Correctness depends on a proper implementation of
+     * {@link Object#equals(Object)} for the element type {@code T}.
+     */
+    @Override
+    public boolean containsAll(Iterable<T> iterable) {
+        Objects.requireNonNull(iterable, "iterable must not be null");
+        for (T t : iterable) {
+            if (!contains(t)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

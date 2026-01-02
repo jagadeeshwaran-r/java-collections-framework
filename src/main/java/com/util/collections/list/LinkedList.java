@@ -265,47 +265,6 @@ public class LinkedList<T> extends AbstractList<T> {
     // ===========================================================================================//
 
     //==================== Search Operations ====================================================//
-    /**
-     * Determines whether this list contains an element equal to the specified value.
-     *
-     * <p><strong>Optimistic Fast Path:</strong>
-     * Performs constant-time checks against {@code head} and {@code tail} before
-     * falling back to linear traversal. This improves best-case performance when
-     * the searched element is located at either end of the list.
-     *
-     * <p><strong>Equality Semantics:</strong>
-     * Comparison is performed using {@link Objects#equals} to safely support
-     * nullable elements when permitted by the list's nullability policy.
-     *
-     * <p><strong>Performance Characteristics:</strong>
-     * <ul>
-     *   <li>Best case: O(1) (element at head or tail)</li>
-     *   <li>Worst case: O(n) (element in middle or not present)</li>
-     * </ul>
-     *
-     * <p><strong>Structural Guarantees:</strong>
-     * This method does not modify the list and preserves all structural invariants.
-     *
-     * @param val the value whose presence in this list is to be tested
-     * @return {@code true} if this list contains an element equal to {@code val},
-     *         {@code false} otherwise
-     */
-    @Override
-    public boolean contains(T val) {
-        // Fast rejection based on nullability policy
-        if (!isNullable && val == null) {
-            return false;
-        }
-
-        Node<T> current = head;
-        while (current != null) {
-            if (Objects.equals(current.data, val)) {
-                return true;
-            }
-            current = current.next;
-        }
-        return false;
-    }
 
     /**
      * Returns the element at the specified position in this list.
@@ -355,37 +314,6 @@ public class LinkedList<T> extends AbstractList<T> {
             pos++;
         }
         return current.data;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * This implementation iterates over the specified {@link Iterable} and
-     * verifies that each element is contained in this list. Containment checks
-     * are delegated to {@link #contains(Object)} in order to preserve consistent
-     * equality semantics and null-handling behavior across the collection API.
-     * </p>
-     *
-     * <p>
-     * The method employs a fail-fast strategy and returns {@code false} as soon
-     * as a missing element is detected, avoiding unnecessary traversal of the
-     * remaining elements.
-     * </p>
-     *
-     * @implNote
-     * The correctness of this operation depends on a proper implementation of
-     * {@link Object#equals(Object)} for the element type {@code T}.
-     */
-    @Override
-    public boolean containsAll(Iterable<T> iterable) {
-        Objects.requireNonNull(iterable, "iterable must not be null");
-        for (T t : iterable) {
-            if (!contains(t)) {
-                return false;
-            }
-        }
-        return true;
     }
     // ===========================================================================================//
 
