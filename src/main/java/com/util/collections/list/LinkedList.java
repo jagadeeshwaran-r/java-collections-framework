@@ -356,6 +356,37 @@ public class LinkedList<T> extends AbstractList<T> {
         }
         return current.data;
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * This implementation iterates over the specified {@link Iterable} and
+     * verifies that each element is contained in this list. Containment checks
+     * are delegated to {@link #contains(Object)} in order to preserve consistent
+     * equality semantics and null-handling behavior across the collection API.
+     * </p>
+     *
+     * <p>
+     * The method employs a fail-fast strategy and returns {@code false} as soon
+     * as a missing element is detected, avoiding unnecessary traversal of the
+     * remaining elements.
+     * </p>
+     *
+     * @implNote
+     * The correctness of this operation depends on a proper implementation of
+     * {@link Object#equals(Object)} for the element type {@code T}.
+     */
+    @Override
+    public boolean containsAll(Iterable<T> iterable) {
+        Objects.requireNonNull(iterable, "iterable must not be null");
+        for (T t : iterable) {
+            if (!contains(t)) {
+                return false;
+            }
+        }
+        return true;
+    }
     // ===========================================================================================//
 
     //====================== Add Operations =====================================================//
