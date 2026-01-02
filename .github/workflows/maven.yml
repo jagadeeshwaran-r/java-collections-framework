@@ -7,11 +7,14 @@ on:
 
 permissions:
   contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
   test:
     name: Run Maven tests
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,7 +24,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: 'maven'
+          cache: maven
 
       - name: Determine Maven command
         id: choose-mvn
@@ -48,4 +51,4 @@ jobs:
         with:
           name: unit-tests
           path: target/surefire-reports/*.xml
-          reporter: junit
+          reporter: java-junit
