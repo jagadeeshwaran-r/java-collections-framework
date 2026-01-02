@@ -288,4 +288,44 @@ public interface List<T> extends Iterable<T> {
      * Space Complexity: O(1)
      */
     T set(int index, T val);
+
+    /**
+     * Returns {@code true} if this list contains all of the elements
+     * provided by the specified {@link Iterable}.
+     * <p>
+     * More formally, returns {@code true} if and only if for every element
+     * {@code e} in the given {@code iterable}, this list contains at least
+     * one element {@code o} such that:
+     * <pre>
+     *     o.equals(e)
+     * </pre>
+     * or both {@code o} and {@code e} are {@code null}.
+     * <p>
+     * Therefore, the correctness of this operation depends on a proper
+     * implementation of the {@link Object#equals(Object)} method for
+     * the element type {@code T}. Elements that do not correctly override
+     * {@code equals(Object)} may lead to unexpected results.
+     * <p>
+     * The order of elements in the specified {@code iterable} is not significant,
+     * and duplicate elements are ignored. This operation does not modify
+     * the state of the list.
+     *
+     * @param iterable the {@code Iterable} whose elements are to be checked
+     *                 for containment in this list
+     * @return {@code true} if this list contains all elements of the specified
+     *         {@code iterable}
+     *
+     * @throws NullPointerException if the specified {@code iterable} is {@code null}
+     *
+     * @implSpec
+     * This implementation iterates over the specified {@code iterable} and
+     * delegates containment checks to {@link #contains(Object)}, which relies
+     * on {@code equals(Object)} for element comparison.
+     *
+     * @apiNote
+     * Clients should ensure that the {@code equals(Object)} contract
+     * (reflexive, symmetric, transitive, consistent, and non-null comparison)
+     * is properly upheld by elements stored in this list.
+     */
+    boolean containsAll(Iterable<T> iterable);
 }
