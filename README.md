@@ -35,18 +35,39 @@ This is **not a wrapper** around `java.util` collections. Every structure is imp
 ```
 java-collections-framework
 │
-├── src/main/java
-│   └── com.util.collections.list
-│       ├── List            (Public contract)
-│       ├── AbstractList    (Template + shared logic)
-│       ├── LinkedList      (Concrete implementation)
-│       └── Main            (Local testing / demo)
+├── .github/                         # GitHub workflows, templates
+├── .idea/                           # IDE configuration (local)
 │
-├── src/test/java
-│   └── LinkedListTest      (Unit tests)
+├── src
+│   ├── main
+│   │   └── java
+│   │       └── com
+│   │           └── util
+│   │               └── collections
+│   │                   └── list
+│   │                       ├── AbstractList.java
+│   │                       ├── LinkedList.java
+│   │                       ├── List.java
+│   │                       └── Main.java              # (optional demo / playground)
+│   │
+│   └── test
+│       └── java
+│           └── com
+│               └── util
+│                   └── collections
+│                       └── list
+│                           ├── LinkedListAddTest.java
+│                           ├── LinkedListAddAtIndexTest.java
+│                           ├── LinkedListClearTest.java
+│                           ├── LinkedListContainsTest.java
+│                           ├── LinkedListGetTest.java
+│                           ├── LinkedListIteratorTest.java
+│                           ├── LinkedListRemoveTest.java
+│                           └── LinkedListSetTest.java
 │
-├── pom.xml
-└── README.md
+├── target/                          # Maven build output
+├── pom.xml                          # Maven configuration     
+└── README.md                        # Project documentation
 ```
 
 ---
@@ -140,7 +161,6 @@ This interface is intentionally minimal and precise.
 
 ### Current Coverage
 
-* `LinkedListTest`
 * Focus on correctness and boundary conditions
 
 ### Testing Philosophy
