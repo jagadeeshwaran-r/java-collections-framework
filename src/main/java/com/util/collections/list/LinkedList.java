@@ -297,22 +297,8 @@ public class LinkedList<T> extends AbstractList<T> {
             return false;
         }
 
-        // Empty list
-        if (head == null) {
-            return false;
-        }
-
-        // Optimistic O(1) checks
-        if (Objects.equals(head.data, val)) {
-            return true;
-        }
-        if (Objects.equals(tail.data, val)) {
-            return true;
-        }
-
-        // Linear scan excluding head and tail
-        Node<T> current = head.next;
-        while (current != tail) {
+        Node<T> current = head;
+        while (current != null) {
             if (Objects.equals(current.data, val)) {
                 return true;
             }
@@ -326,7 +312,7 @@ public class LinkedList<T> extends AbstractList<T> {
      *
      * <p><strong>Index Semantics:</strong>
      * Indices are zero-based. The valid range is {@code [0, size() - 1]}.
-     * Index validation is delegated to {@link #checkIndex(int)}.
+     * Index validation is delegated to {@link #checkIndexOrElseThrow(int)}.
      *
      * <p><strong>Behavior:</strong>
      * This operation performs a forward traversal starting from {@code head}
@@ -360,7 +346,7 @@ public class LinkedList<T> extends AbstractList<T> {
      */
     @Override
     public T get(int index) {
-        checkIndex(index);
+        checkIndexOrElseThrow(index);
 
         Node<T> current = head;
         int pos = 0;
@@ -556,7 +542,65 @@ public class LinkedList<T> extends AbstractList<T> {
         count++;
     }
 
+    /**
+     * Replaces the element at the specified position in this list.
+     *
+     * <p>This is a non-structural operation. It mutates only the value stored at the
+     * given index and does not affect the size, ordering, or topology of the list.</p>
+     *
+     * <p>The previous value is returned to preserve observational consistency with
+     * standard {@code List} semantics.</p>
+     *
+     * <h3>Contractual Guarantees</h3>
+     * <ul>
+     *   <li>The list size remains unchanged</li>
+     *   <li>The relative order of elements is preserved</li>
+     *   <li>No nodes are created or removed</li>
+     * </ul>
+     *
+     * @param index zero-based index of the element to replace
+     * @param val   replacement value
+     * @return the value previously stored at {@code index}
+     *
+     * @throws IndexOutOfBoundsException if {@code index} is outside the valid range
+     * @throws NullPointerException if {@code val} violates the list's null policy
+     */
+    @Override
+    public T set(int index, T val) {
+        checkNullAllowed(val);
+        Node<T> node = getNodeAt(index);
+        T oldValue = node.data;
+        node.data = val;
+        return oldValue;
+    }
+
+    /**
+     * Resolves a logical index into its corresponding storage node.
+     *
+     * <p>This method centralizes index validation and node resolution, ensuring
+     * consistent failure behavior across all index-based operations.</p>
+     *
+     * <p>Implementations may apply localized optimizations while preserving
+     * correctness and determinism.</p>
+     *
+     * @param index zero-based index to resolve
+     * @return the node representing the specified index
+     *
+     * @throws IndexOutOfBoundsException if {@code index} is invalid
+     */
+    private Node<T> getNodeAt(int index) {
+        checkIndexOrElseThrow(index);
+        if (index == count - 1) {
+            return tail;
+        }
+        Node<T> currentNode = head;
+        for (int i = 0; i < index; i++) {
+            currentNode = currentNode.next;
+        }
+        return currentNode;
+    }
     // ===========================================================================================//
+
     @Override
     public int size() {
         return count;
