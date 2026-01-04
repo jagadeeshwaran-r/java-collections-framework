@@ -57,10 +57,10 @@ jobs:
       - name: Auto-approve PR if tests pass
         if: |
           success() &&
-          github.actor != 'github-actions[bot]' &&
           github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.PR_APPROVER_TOKEN }}
           script: |
             const pr = context.payload.pull_request;
 
@@ -74,5 +74,5 @@ jobs:
               repo: context.repo.repo,
               pull_number: pr.number,
               event: "APPROVE",
-              body: "✅ Auto-approved by CI: All JUnit tests passed successfully."
+              body: "✅ Auto-approved by CI Bot: All JUnit tests passed successfully."
             });
