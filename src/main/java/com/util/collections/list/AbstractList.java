@@ -1,5 +1,6 @@
 package com.util.collections.list;
 
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -226,4 +227,63 @@ abstract class AbstractList<T> implements List<T> {
         }
         return true;
     }
+    /**
+     * Returns a string representation of this list.
+     *
+     * <p>The returned string is intended for diagnostic and debugging purposes
+     * and follows a consistent, human-readable format:</p>
+     *
+     * <pre>
+     * {@code
+     * ClassName{}
+     * ClassName{e1}
+     * ClassName{e1, e2, ..., en}
+     * }
+     * </pre>
+     *
+     * <p><strong>Formatting Rules:</strong>
+     * <ul>
+     *   <li>The simple runtime class name is used as the prefix</li>
+     *   <li>Elements are enclosed in curly braces {@code {}}</li>
+     *   <li>Elements are separated by {@code ", "} (comma and space)</li>
+     *   <li>No trailing delimiter is included</li>
+     * </ul>
+     *
+     * <p><strong>Behavioral Guarantees:</strong>
+     * <ul>
+     *   <li>Returns {@code ClassName{}} for an empty list</li>
+     *   <li>Preserves element iteration order</li>
+     *   <li>Safely represents {@code null} elements if permitted by the list</li>
+     *   <li>Does not expose internal storage structure</li>
+     * </ul>
+     *
+     * <p><strong>Design Notes:</strong>
+     * <ul>
+     *   <li>This implementation relies solely on the public {@link Iterator}
+     *       abstraction rather than internal node or array structures</li>
+     *   <li>The method is side-effect free and does not modify list state</li>
+     *   <li>Subclasses automatically inherit correct string formatting without
+     *       additional overrides</li>
+     * </ul>
+     *
+     * @return a string representation of this list
+     */
+    @Override
+    public String toString() {
+        Iterator<T> iterator = iterator();
+        if (!iterator.hasNext()) {
+            return getClass().getSimpleName() + "{}";
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getClass().getSimpleName()).append("List{");
+        while (iterator.hasNext()) {
+            stringBuilder.append(iterator.next());
+            if (iterator.hasNext()) {
+                stringBuilder.append(", ");
+            }
+        }
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
 }
