@@ -288,4 +288,6 @@ public interface List<T> extends Iterable<T> {
      * Space Complexity: O(1)
      */
     T set(int index, T val);
+
+    T remove(int index);
 }
