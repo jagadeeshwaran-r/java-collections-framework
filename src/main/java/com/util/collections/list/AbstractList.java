@@ -275,7 +275,7 @@ abstract class AbstractList<T> implements List<T> {
             return getClass().getSimpleName() + "{}";
         }
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getClass().getSimpleName()).append("List{");
+        stringBuilder.append(getClass().getSimpleName()).append("{");
         while (iterator.hasNext()) {
             stringBuilder.append(iterator.next());
             if (iterator.hasNext()) {
