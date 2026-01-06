@@ -328,4 +328,5 @@ public interface List<T> extends Iterable<T> {
      * is properly upheld by elements stored in this list.
      */
     boolean containsAll(Iterable<T> iterable);
+    boolean addAll(Iterable<T> iterable);
 }
