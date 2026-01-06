@@ -227,6 +227,16 @@ abstract class AbstractList<T> implements List<T> {
         }
         return true;
     }
+
+    @Override
+    public boolean addAll(Iterable<T> iterable) {
+        Objects.requireNonNull(iterable, "iterable must not be null");
+        for (T e : iterable) {
+            add(e);
+        }
+        return true;
+    }
+
     /**
      * Returns a string representation of this list.
      *
