@@ -289,6 +289,7 @@ public interface List<T> extends Iterable<T> {
      */
     T set(int index, T val);
 
+    T remove(int index);
     /**
      * Returns {@code true} if this list contains all of the elements
      * provided by the specified {@link Iterable}.

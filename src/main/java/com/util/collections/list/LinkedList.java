@@ -217,6 +217,51 @@ public class LinkedList<T> extends AbstractList<T> {
         return false;
     }
 
+    private void clearHeadAndTailIfEmpty() {
+        if (isEmpty()) {
+            head = null;
+            tail = null;
+        }
+    }
+
+    @Override
+    public T remove(int index) {
+        checkIndexOrElseThrow(index);
+
+        Node<T> removed;
+        T removedValue;
+
+        if (index == 0) {
+            removed = head;
+            removedValue = removed.data;
+
+            head = head.next;
+            count--;
+
+            clearHeadAndTailIfEmpty();
+            return removedValue;
+        }
+
+        Node<T> previous = head;
+        for (int i = 0; i < index - 1; i++) {
+            previous = previous.next;
+        }
+
+        removed = previous.next;
+        removedValue = removed.data;
+
+        previous.next = removed.next;
+
+        // if last element removed → update tail
+        if (removed == tail) {
+            tail = previous;
+        }
+
+        count--;
+        return removedValue;
+    }
+
+
     /**
      * Removes all elements from this list.
      *
@@ -258,9 +303,8 @@ public class LinkedList<T> extends AbstractList<T> {
         while (current != null) {
             current = unlink(current);
         }
-        head = null;
-        tail = null;
         count = 0;
+        clearHeadAndTailIfEmpty();
     }
     // ===========================================================================================//
 
