@@ -1,5 +1,6 @@
 package com.util.collections.list;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -188,6 +189,7 @@ public class LinkedList<T> extends AbstractList<T> {
         if (Objects.equals(head.data, val)) {
             head = unlink(head);
             count--;
+            noOfModification++;
 
             // list became empty
             if (head == null) {
@@ -203,7 +205,7 @@ public class LinkedList<T> extends AbstractList<T> {
             if (Objects.equals(current.data, val)) {
                 prev.next = unlink(current);
                 count--;
-
+                noOfModification++;
                 // Case 2: removed tail
                 if (current == tail) { // To check current node is tail
                     tail = prev;
@@ -257,6 +259,7 @@ public class LinkedList<T> extends AbstractList<T> {
         Node<T> current = head;
         while (current != null) {
             current = unlink(current);
+            noOfModification++;
         }
         head = null;
         tail = null;
@@ -379,6 +382,7 @@ public class LinkedList<T> extends AbstractList<T> {
         }
         tail = newNode;
         count++;
+        noOfModification++;
     }
 
     /**
@@ -427,6 +431,7 @@ public class LinkedList<T> extends AbstractList<T> {
             tail = head;
         }
         count++;
+        noOfModification++;
     }
 
     /**
@@ -499,6 +504,7 @@ public class LinkedList<T> extends AbstractList<T> {
         newNode.next = currNode.next;
         currNode.next = newNode;
         count++;
+        noOfModification++;
     }
 
     /**
@@ -615,22 +621,71 @@ public class LinkedList<T> extends AbstractList<T> {
      */
     private class LinkedListIterator implements Iterator<T> {
 
-        /** The next node to be returned by the iterator */
-        Node<T> currentNode = head;
+        private Node<T> current = head;        // next node to return
+        private Node<T> lastReturned = null;   // node returned by last next()
+        private Node<T> previous = null;       // node before lastReturned
+
+        private int expectedModCount = noOfModification;
+        private boolean canRemove = false;
 
         @Override
         public boolean hasNext() {
-            return currentNode != null;
+            return current != null;
         }
 
         @Override
         public T next() {
-            if (!hasNext()) {
+            checkForCoModification();
+
+            if (current == null) {
                 throw new NoSuchElementException();
             }
-            T data = currentNode.data;
-            currentNode = currentNode.next;
-            return data;
+
+            previous = lastReturned;
+            lastReturned = current;
+            current = current.next;
+            canRemove = true;
+
+            return lastReturned.data;
+        }
+
+        @Override
+        public void remove() {
+            checkForCoModification();
+
+            if (!canRemove) {
+                throw new IllegalStateException(
+                        "remove() can only be called once after next()"
+                );
+            }
+
+            // Case 1: removing head
+            if (lastReturned == head) {
+                head = unlink(lastReturned);
+                if (head == null) {
+                    tail = null; // list became empty
+                }
+            }
+            // Case 2: removing non-head
+            else {
+                previous.next = unlink(lastReturned);
+                if (lastReturned == tail) {
+                    tail = previous;
+                }
+            }
+
+            count--;
+            noOfModification++;
+            expectedModCount++;
+
+            lastReturned = null;
+            canRemove = false;
+        }
+
+        private void checkForCoModification() {
+            if (noOfModification != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
         }
     }
 }

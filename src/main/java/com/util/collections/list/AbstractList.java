@@ -73,6 +73,8 @@ abstract class AbstractList<T> implements List<T> {
      */
     protected final boolean isNullable;
 
+    protected int noOfModification = 0;
+
     /**
      * Constructs an {@code AbstractList} with the specified nullability policy.
      *
