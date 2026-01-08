@@ -492,12 +492,10 @@ public class LinkedList<T> extends AbstractList<T> {
         }
 
         Node<T> newNode = new Node<>(val);
-        Node<T> currNode = head;
-        for (int i = 1; i < index; i++) {
-            currNode = currNode.next;
-        }
-        newNode.next = currNode.next;
-        currNode.next = newNode;
+        Node<T> previous = getNodeAt(index - 1);
+        Node<T> previousNext = previous.next;
+        previous.next = newNode;
+        newNode.next = previousNext;
         count++;
     }
 
