@@ -306,14 +306,7 @@ public class LinkedList<T> extends AbstractList<T> {
     @Override
     public T get(int index) {
         checkIndexOrElseThrow(index);
-
-        Node<T> current = head;
-        int pos = 0;
-        while (pos != index) {
-            current = current.next;
-            pos++;
-        }
-        return current.data;
+        return getNodeAt(index).data;
     }
     // ===========================================================================================//
 
