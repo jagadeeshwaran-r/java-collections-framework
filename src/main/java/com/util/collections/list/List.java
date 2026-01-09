@@ -29,7 +29,7 @@ package com.util.collections.list;
  * essential list operations without advanced features such as sublists,
  * iterators with removal, or bulk operations.
  *
- * @author Jagadeesh Waran
+ * @author Jagadeesh Waran, sasi prakash, prasanth, kishore kumar
  */
 public interface List<T> extends Iterable<T> {
 
