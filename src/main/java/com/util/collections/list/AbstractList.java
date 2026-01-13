@@ -228,6 +228,55 @@ abstract class AbstractList<T> implements List<T> {
         return true;
     }
 
+    /**
+     * Appends all elements from the specified {@link Iterable} to the end of this list,
+     * in the order they are provided by the iterable's iterator.
+     *
+     * <h2>Behavior</h2>
+     * <p>
+     * This method sequentially iterates over the supplied {@code iterable} and delegates
+     * each insertion to {@link #add(Object)}. As a result:
+     * </p>
+     * <ul>
+     *   <li>Element order is preserved</li>
+     *   <li>All validation rules defined by {@code add(T)} are enforced</li>
+     *   <li>Element count is updated incrementally</li>
+     * </ul>
+     *
+     * <h2>Null Handling</h2>
+     * <p>
+     * If this list does not permit {@code null} elements, encountering a {@code null}
+     * value during iteration will result in an {@link IllegalArgumentException}.
+     * </p>
+     *
+     * <h2>Failure Semantics</h2>
+     * <p>
+     * This operation is <strong>not atomic</strong>. If an exception is thrown while
+     * processing the iterable, elements added prior to the failure will remain
+     * in the list.
+     * </p>
+     *
+     * <h2>Performance Characteristics</h2>
+     * <ul>
+     *   <li>Time Complexity: {@code O(n)} where {@code n} is the number of elements
+     *       in the provided iterable</li>
+     *   <li>Space Complexity: {@code O(1)} excluding storage required by subclasses</li>
+     * </ul>
+     *
+     * <h2>Design Notes</h2>
+     * <ul>
+     *   <li>Delegating to {@link #add(Object)} ensures consistent validation,
+     *       boundary checks, and nullability enforcement</li>
+     *   <li>Concrete subclasses are responsible only for structural insertion</li>
+     *   <li>This method does not attempt to optimize bulk insertion</li>
+     * </ul>
+     *
+     * @param iterable the elements to be appended to this list
+     * @return {@code true} upon successful completion
+     * @throws NullPointerException if {@code iterable} is {@code null}
+     * @throws IllegalArgumentException if a {@code null} element is encountered
+     *                                  and the list does not permit {@code null} values
+     */
     @Override
     public boolean addAll(Iterable<T> iterable) {
         Objects.requireNonNull(iterable, "iterable must not be null");
