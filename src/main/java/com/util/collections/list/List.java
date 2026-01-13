@@ -290,7 +290,7 @@ public interface List<T> extends Iterable<T> {
     T set(int index, T val);
 
     /**
-     * Returns {@code true} if this list contains all of the elements
+     * Returns {@code true} if this list contains all the elements
      * provided by the specified {@link Iterable}.
      * <p>
      * More formally, returns {@code true} if and only if for every element
