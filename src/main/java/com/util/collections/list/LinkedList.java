@@ -248,7 +248,7 @@ public class LinkedList<T> extends AbstractList<T> {
      * </ul>
      *
      * <p><strong>Design Rationale:</strong>
-     * Explicitly unlinking each node (rather than simply nulling {@code head})
+     * Explicitly unlinking each node (rather than simply null {@code head})
      * ensures prompt release of references, which is beneficial in long-lived
      * data structures and memory-sensitive environments.
      */
@@ -562,6 +562,7 @@ public class LinkedList<T> extends AbstractList<T> {
     }
 
     @Override
+    @SuppressWarnings("NullableProblems")
     public Iterator<T> iterator() {
         return new LinkedListIterator();
     }
