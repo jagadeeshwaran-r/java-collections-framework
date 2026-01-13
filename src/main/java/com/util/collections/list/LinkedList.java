@@ -177,6 +177,7 @@ public class LinkedList<T> extends AbstractList<T> {
      * @return {@code true} if an element was removed, {@code false} otherwise
      */
     @Override
+    // TODO: Need to refactor this API.
     public boolean remove(T val) {
         checkNullAllowed(val);
 
