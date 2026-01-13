@@ -320,7 +320,7 @@ abstract class AbstractList<T> implements List<T> {
      * <ul>
      *   <li>This implementation relies solely on the public {@link Iterator}
      *       abstraction rather than internal node or array structures</li>
-     *   <li>The method is side-effect free and does not modify list state</li>
+     *   <li>The method is side effect free and does not modify list state</li>
      *   <li>Subclasses automatically inherit correct string formatting without
      *       additional overrides</li>
      * </ul>
