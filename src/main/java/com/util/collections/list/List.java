@@ -290,7 +290,7 @@ public interface List<T> extends Iterable<T> {
     T set(int index, T val);
 
     /**
-     * Returns {@code true} if this list contains all of the elements
+     * Returns {@code true} if this list contains all the elements
      * provided by the specified {@link Iterable}.
      * <p>
      * More formally, returns {@code true} if and only if for every element
@@ -328,5 +328,64 @@ public interface List<T> extends Iterable<T> {
      * is properly upheld by elements stored in this list.
      */
     boolean containsAll(Iterable<T> iterable);
+
+    /**
+     * Appends all elements provided by the specified {@link Iterable} to the end
+     * of this list, in the order they are encountered during iteration.
+     *
+     * <h2>Contract</h2>
+     * <p>
+     * After this method returns successfully:
+     * </p>
+     * <ul>
+     *   <li>All elements from the given {@code iterable} are present in this list</li>
+     *   <li>The relative order of existing elements is preserved</li>
+     *   <li>The relative order of newly added elements matches the iteration order
+     *       of the provided {@code iterable}</li>
+     *   <li>The size of the list is increased by the number of elements added</li>
+     * </ul>
+     *
+     * <h2>Null Handling</h2>
+     * <p>
+     * Whether {@code null} elements are permitted is implementation-specific.
+     * If {@code null} values are not allowed, implementations must reject
+     * {@code null} elements encountered during iteration.
+     * </p>
+     *
+     * <h2>Failure Semantics</h2>
+     * <p>
+     * This operation is <strong>not required to be atomic</strong>. If an exception
+     * occurs while iterating over the supplied {@code iterable}, elements added
+     * prior to the failure may remain in the list.
+     * </p>
+     *
+     * <h2>Structural Modification</h2>
+     * <p>
+     * This method is a <em>structural modification</em> and may invalidate existing
+     * iterators, depending on the implementation.
+     * </p>
+     *
+     * <h2>Performance Characteristics</h2>
+     * <p>
+     * No guarantees are made regarding time or space complexity. Performance
+     * characteristics depend on both the list implementation and the nature
+     * of the provided {@code iterable}.
+     * </p>
+     *
+     * @param iterable the elements to be appended to this list
+     * @return {@code true} if the list was modified as a result of this call
+     *
+     * @throws NullPointerException if {@code iterable} is {@code null}
+     * @throws IllegalArgumentException if a {@code null} element is encountered
+     *         and the implementation does not permit {@code null} values
+     *
+     * @implSpec
+     * Implementations may delegate this operation to repeated invocations of
+     * {@link #add(Object)} to ensure consistent validation and ordering semantics.
+     *
+     * @apiNote
+     * Clients should not assume transactional behavior. If atomicity is required,
+     * it must be enforced externally by the caller or by a specialized implementation.
+     */
     boolean addAll(Iterable<T> iterable);
 }
