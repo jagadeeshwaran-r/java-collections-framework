@@ -31,7 +31,7 @@ package com.util.collections.list;
  *
  * @author Jagadeesh Waran
  */
-public interface List<T> extends Iterable<T> {
+public interface List<T> extends Collection<T> {
 
     /**
      * Appends the specified element to the end of this list.
@@ -388,4 +388,7 @@ public interface List<T> extends Iterable<T> {
      * it must be enforced externally by the caller or by a specialized implementation.
      */
     boolean addAll(Iterable<T> iterable);
+
+
+    T[] toArray(T[] a);
 }
