@@ -252,22 +252,68 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
      * {@inheritDoc}
      *
      * <p>
-     * This implementation delegates to {@link #finishToArray(Object[])} to perform
-     * the array population logic in full compliance with the
+     * Returns an array containing all elements of this list in proper iteration
+     * order. If the runtime length of the supplied array is insufficient to
+     * hold the elements, a new array of the same runtime component type is
+     * allocated and returned.
+     * </p>
+     *
+     * <p>
+     * If the supplied array has a length greater than the number of elements
+     * in this list, the element immediately following the last list element
+     * is set to {@code null}, in accordance with the
      * {@link java.util.Collection#toArray(Object[])} contract.
      * </p>
      *
      * <p>
-     * The returned array preserves the runtime component type of the supplied
-     * array and contains the elements of this list in iteration order.
+     * This implementation delegates the full array population logic to
+     * {@link #finishToArray(Object[])}, ensuring that all concrete list
+     * implementations inherit identical, specification-compliant behavior.
      * </p>
      *
+     * @param a the array into which the elements of this list are to be stored,
+     *          if it is large enough; otherwise, a new array of the same runtime
+     *          type is allocated for this purpose
+     * @return an array containing the elements of this list
+     *
      * @implNote
-     * This method centralizes array conversion behavior in the abstract superclass
-     * to ensure consistent semantics across all concrete list implementations.
+     * Array conversion logic is centralized in the abstract superclass to
+     * guarantee consistent semantics, ordering, and runtime type preservation
+     * across all concrete list implementations.
      */
     @Override
     public T[] toArray(T[] a) {
         return finishToArray(a);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Returns a newly allocated {@code Object[]} containing all elements of this
+     * list in proper iteration order. The returned array is independent of the
+     * underlying list structure and may be freely modified by the caller.
+     * </p>
+     *
+     * <p>
+     * This implementation performs a single pass over the list using its
+     * iterator and allocates an array sized exactly to the current element
+     * count, ensuring predictable memory usage and linear-time complexity.
+     * </p>
+     *
+     * @return an array containing all elements of this list
+     *
+     * @implNote
+     * This method intentionally avoids delegating to
+     * {@link #toArray(Object[])} to eliminate unnecessary runtime type checks
+     * and conditional logic when an {@code Object[]} result is sufficient.
+     */
+    @Override
+    public Object[] toArray() {
+        Object[] response = new Object[count];
+        int index = 0;
+        for (T v : this)
+            response[index++] = v;
+        return response;
     }
 }
