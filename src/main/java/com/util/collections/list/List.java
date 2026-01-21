@@ -389,6 +389,60 @@ public interface List<T> extends Collection<T> {
      */
     boolean addAll(Iterable<T> iterable);
 
-
+    /**
+     * Returns an array containing all elements of this list in proper iteration
+     * order; the runtime type of the returned array is that of the specified array.
+     *
+     * <p>
+     * If the list fits in the specified array, it is returned therein. Otherwise,
+     * a new array is allocated with the runtime component type of the specified
+     * array and the size of this list.
+     * </p>
+     *
+     * <p>
+     * If the list fits in the specified array with room to spare (i.e., the array
+     * has more elements than the list), the element in the array immediately
+     * following the end of the list is set to {@code null}. This is useful in
+     * determining the length of the list <i>only</i> if the caller knows that the
+     * list does not contain any {@code null} elements.
+     * </p>
+     *
+     * <p>
+     * The elements are returned in the order defined by this list's iterator.
+     * </p>
+     *
+     * @param a the array into which the elements of this list are to be stored,
+     *          if it is large enough; otherwise, a new array of the same runtime
+     *          type is allocated for this purpose
+     * @return an array containing the elements of this list
+     *
+     * @throws ArrayStoreException if the runtime type of the specified array
+     *         is not a supertype of the runtime type of every element in this list
+     * @throws NullPointerException if the specified array is {@code null}
+     *
+     * @see #toArray()
+     * @see java.util.Collection#toArray(Object[])
+     */
     T[] toArray(T[] a);
+
+    /**
+     * Returns an array containing all elements of this list in proper iteration
+     * order.
+     *
+     * <p>
+     * The returned array is a newly allocated {@code Object[]} and is independent
+     * of this list. Modifications to the returned array will not affect the list,
+     * and modifications to the list will not be reflected in the returned array.
+     * </p>
+     *
+     * <p>
+     * The elements are returned in the order defined by this list's iterator.
+     * </p>
+     *
+     * @return an array containing all elements of this list
+     *
+     * @see #toArray(Object[])
+     * @see java.util.Collection#toArray()
+     */
+    Object[] toArray();
 }
