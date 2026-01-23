@@ -167,6 +167,67 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
     }
 
     /**
+     * Returns the index of the first occurrence of the specified value in this list,
+     * or {@code -1} if this list does not contain the value.
+     *
+     * <p><strong>Search Semantics:</strong>
+     * This method performs a forward traversal of the list starting from the
+     * logical head (index {@code 0}) and compares each element to the supplied
+     * value using {@link Objects#equals(Object, Object)}. The first index at which
+     * equality is observed is returned immediately.
+     * </p>
+     *
+     * <p><strong>Equality Contract:</strong>
+     * Equality comparison is delegated to {@link Objects#equals(Object, Object)}
+     * to ensure:
+     * <ul>
+     *   <li>Null-safe comparison when {@code null} values are permitted</li>
+     *   <li>Behavior consistent with {@link #contains(Object)}</li>
+     *   <li>Compliance with standard {@code List} equality semantics</li>
+     * </ul>
+     * </p>
+     *
+     * <p><strong>Behavioral Guarantees:</strong>
+     * <ul>
+     *   <li>Returns the index of the <em>first</em> matching element</li>
+     *   <li>Does not modify the list structure</li>
+     *   <li>Terminates early upon successful match detection</li>
+     * </ul>
+     * </p>
+     *
+     * <p><strong>Performance Characteristics:</strong>
+     * <ul>
+     *   <li>Best case: {@code O(1)} — the element is at the head of the list</li>
+     *   <li>Worst case: {@code O(n)} — the element is absent or located at the tail</li>
+     *   <li>Space complexity: {@code O(1)}</li>
+     * </ul>
+     * </p>
+     *
+     * <p><strong>Design Rationale:</strong>
+     * This implementation is intentionally independent of the underlying storage
+     * strategy and relies solely on the list’s {@link Iterable} contract. This
+     * ensures that all concrete list implementations inherit consistent search
+     * semantics while retaining the freedom to override this method for
+     * storage-specific optimizations.
+     * </p>
+     *
+     * @param v the value to search for, which may be {@code null} if permitted by
+     *          the list's nullability policy
+     * @return the zero-based index of the first matching element, or {@code -1}
+     *         if no such element exists
+     */
+    @Override
+    public int indexOf(T v) {
+        int i = 0;
+        for (T val : this) {
+            if (Objects.equals(val, v))
+                return i;
+            i++;
+        }
+        return -1;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * <p>

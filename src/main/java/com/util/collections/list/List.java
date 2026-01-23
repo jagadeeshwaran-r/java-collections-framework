@@ -445,4 +445,48 @@ public interface List<T> extends Collection<T> {
      * @see java.util.Collection#toArray()
      */
     Object[] toArray();
+
+    /**
+     * Returns the index of the first occurrence of the specified value in this list,
+     * or {@code -1} if this list does not contain the value.
+     *
+     * <p><strong>Contract:</strong>
+     * This method searches the list in iteration order and returns the lowest
+     * index {@code i} such that {@code Objects.equals(get(i), v)} is {@code true}.
+     * If no such element exists, {@code -1} is returned.
+     * </p>
+     *
+     * <p><strong>Equality Semantics:</strong>
+     * Equality is determined using {@link java.util.Objects#equals(Object, Object)} to ensure
+     * null-safe comparison and consistency with {@link #contains(Object)}.
+     * </p>
+     *
+     * <p><strong>Behavioral Guarantees:</strong>
+     * <ul>
+     *   <li>Returns the index of the <em>first</em> matching element</li>
+     *   <li>Does not modify the list</li>
+     *   <li>Returns {@code -1} if the value is not present</li>
+     * </ul>
+     *
+     * <p><strong>Performance Notes:</strong>
+     * The time complexity of this operation depends on the concrete list
+     * implementation. Sequential-access lists typically require linear time,
+     * while indexed or optimized structures may provide faster lookups.
+     * </p>
+     *
+     * <p><strong>Null Handling:</strong>
+     * The behavior when {@code v} is {@code null} is defined by the list’s
+     * nullability policy. If {@code null} values are not permitted, implementations
+     * may reject {@code null} inputs.
+     * </p>
+     *
+     * @param v the value whose index is to be determined
+     * @return the zero-based index of the first occurrence of the specified value,
+     * or {@code -1} if this list does not contain the value
+     * @apiNote This method is primarily intended for positional lookup and should not be
+     * used as a substitute for {@link #contains(Object)} when only membership
+     * testing is required. Implementations are encouraged to ensure that
+     * {@code indexOf} and {@code contains} remain semantically consistent.
+     */
+    int indexOf(T v);
 }
