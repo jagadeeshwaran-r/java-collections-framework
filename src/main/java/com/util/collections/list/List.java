@@ -164,7 +164,7 @@ public interface List<T> extends Collection<T> {
      * @throws IllegalArgumentException if {@code val} is {@code null} and the
      *         implementation does not permit {@code null} elements
      */
-    boolean remove(T val);
+    boolean remove(Object val);
 
     /**
      * Returns {@code true} if this list contains the specified element.

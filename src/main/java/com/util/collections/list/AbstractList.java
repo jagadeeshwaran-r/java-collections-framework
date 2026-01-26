@@ -135,7 +135,7 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
      * @param data the element to validate
      * @throws IllegalArgumentException if {@code null} is not permitted
      */
-    protected void checkNullAllowed(T data) {
+    protected void checkNullAllowed(Object data) {
         if (!isNullable && Objects.isNull(data))
             throw new IllegalArgumentException("List does not allow null values");
     }
