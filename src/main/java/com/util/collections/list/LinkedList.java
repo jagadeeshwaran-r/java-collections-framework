@@ -184,7 +184,7 @@ public class LinkedList<T> extends AbstractList<T> {
      */
     @Override
     // TODO: Need to refactor this API.
-    public boolean remove(T val) {
+    public boolean remove(Object val) {
         checkNullAllowed(val);
 
         if (head == null) {
