@@ -1,6 +1,7 @@
 package com.util.collections.list;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -98,6 +99,11 @@ public class LinkedList<T> extends AbstractList<T> {
 
     public LinkedList() {
         super(true);
+    }
+
+    public LinkedList(List<T> list) {
+        super(true);
+        addAll(list);
     }
 
     public LinkedList(boolean isNullable) {
