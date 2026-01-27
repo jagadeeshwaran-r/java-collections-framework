@@ -212,6 +212,58 @@ public abstract class AbstractCollection<T> implements Collection<T> {
     }
 
     /**
+     * Computes the hash code for this list based on its elements and their order.
+     *
+     * <p>This implementation uses a <em>polynomial rolling hash</em>, which is the
+     * standard approach employed by core Java collection types such as
+     * {@link java.util.List} and {@link java.util.ArrayList}.
+     *
+     * <p>The hash is defined by the polynomial:
+     * <pre>
+     *   H = e₀·pⁿ⁻¹ + e₁·pⁿ⁻² + ... + eₙ₋₁
+     * </pre>
+     * where {@code eᵢ} is the hash code of the i-th element, {@code p} is a fixed
+     * prime base (typically {@code 31}), and {@code n} is the number of elements.
+     *
+     * <p>For efficiency, the polynomial is evaluated iteratively as:
+     * <pre>
+     *   H = 0
+     *   H = H * p + e
+     * </pre>
+     * which avoids explicit power computations while producing the same result.
+     *
+     * <p>In concrete terms, the computation follows:
+     * <pre>
+     *   hash = 31 * hash + elementHash
+     * </pre>
+     *
+     * <p>This technique ensures:
+     * <ul>
+     *   <li><strong>Order sensitivity</strong> — lists with the same elements in
+     *       different orders will (with high probability) produce different hash codes.</li>
+     *   <li><strong>Good hash distribution</strong> — the use of a prime multiplier
+     *       reduces collisions in hash-based data structures.</li>
+     *   <li><strong>Consistency with {@code equals(Object)}</strong> — equal lists
+     *       produce identical hash codes.</li>
+     * </ul>
+     *
+     * <p>{@code null} elements are supported and contribute a hash value of {@code 0}.
+     *
+     * <p>Integer overflow during computation is intentional and permitted.
+     * Hash codes are computed modulo {@code 2^32}, as defined by the Java
+     * Language Specification.
+     *
+     * @return the hash code value for this collection.
+     */
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        for (T v : this)
+            hashCode = 31 * hashCode + (v == null ? 0 : v.hashCode());
+        return hashCode;
+    }
+
+    /**
      * Returns a string representation of this list.
      *
      * <p>The returned string is intended for diagnostic and debugging purposes
