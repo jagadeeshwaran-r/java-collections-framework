@@ -489,4 +489,50 @@ public interface List<T> extends Collection<T> {
      * {@code indexOf} and {@code contains} remain semantically consistent.
      */
     int indexOf(T v);
+
+    /**
+     * Returns the index of the last occurrence of the specified element
+     * in this list, or {@code -1} if this list does not contain the element.
+     *
+     * <p>
+     * Element comparison is performed using {@link Object#equals(Object)}.
+     * This method <strong>relies entirely on the correctness of the
+     * {@code equals} implementation</strong> of the elements stored in the list.
+     * Implementations that violate the general {@code equals} contract may cause
+     * this method to return unexpected or inconsistent results.
+     * </p>
+     *
+     * <p>
+     * A {@code null} value is considered a valid search target and will match
+     * {@code null} elements if this list permits {@code null} values.
+     * </p>
+     *
+     * <p>
+     * If the element occurs multiple times, this method returns the index
+     * of the <em>rightmost</em> (last) occurrence.
+     * </p>
+     *
+     * <p>
+     * The returned index is zero-based and corresponds to the logical ordering
+     * of elements as exposed by this list’s iteration order.
+     * </p>
+     *
+     * <p>
+     * Performance characteristics depend on the concrete list implementation.
+     * For most list implementations, this operation runs in linear time
+     * {@code O(n)}.
+     * </p>
+     *
+     * @apiNote
+     * This method performs logical equality comparison, not reference comparison.
+     * It should be used only when element equivalence is well-defined via
+     * {@code equals}. For identity-based searches, clients must use alternative
+     * mechanisms.
+     *
+     * @param v the element to search for, may be {@code null}
+     * @return the index of the last occurrence of the specified element,
+     *         or {@code -1} if this list does not contain the element
+     */
+    int lastIndexOf(T v);
+
 }
