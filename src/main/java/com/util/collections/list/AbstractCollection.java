@@ -264,6 +264,39 @@ public abstract class AbstractCollection<T> implements Collection<T> {
     }
 
     /**
+     * Compares the specified object with this collection for equality.
+     *
+     * <p>The result is {@code true} if and only if the specified object is also a
+     * {@link Collection}, has the same size as this collection, and all corresponding
+     * elements in both collections are equal (in order). {@code null} elements are
+     * supported and compared safely using {@link Objects#equals(Object, Object)}.
+     *
+     * <p><b>Default Behavior:</b> This is a default {@code equals} implementation
+     * across all collections inheriting from this class. Subclasses that require
+     * higher performance for equality checks may override this method.
+     *
+     * <p><b>API Note:</b> Order of elements matters. Two collections with identical
+     * elements in different orders will be considered unequal.
+     *
+     * @param o the object to be compared for equality with this collection
+     * @return {@code true} if the specified object is equal to this collection
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Collection<?> other)) return false;
+        if (count != other.size()) return false;
+
+        Iterator<?> i = other.iterator();
+        for (T v : this) {
+            if (!i.hasNext() || !Objects.equals(v, i.next())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns a string representation of this list.
      *
      * <p>The returned string is intended for diagnostic and debugging purposes

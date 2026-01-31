@@ -34,4 +34,29 @@ package com.util.collections.list;
  * @param <T> the type of elements maintained by this collection
  */
 public interface Collection<T> extends Iterable<T> {
+
+    /**
+     * Returns the number of elements in this collection.
+     *
+     * <p>This method provides the current size of the collection. It is a core
+     * contract of the {@link Collection} interface, and all inheriting collections
+     * must provide an efficient and accurate implementation.
+     *
+     * <p><b>Default Behavior:</b> Since this is an interface, no default size
+     * computation is provided. Implementors are responsible for maintaining
+     * the size consistently with additions and removals.
+     *
+     * <p><b>Performance Note:</b> The method should ideally run in O(1) time.
+     * If the underlying collection cannot maintain a cached size, the method
+     * may iterate over elements to count them, which can impact performance
+     * for large collections.
+     *
+     * <p><b>API Note:</b> This method is used by default {@link # equals(Object)}
+     * and {@link # hashCode()} implementations to validate collection size.
+     * Accuracy of {@code size()} is essential to ensure correctness of equality
+     * checks and hash code calculations.
+     *
+     * @return the number of elements in this collection
+     */
+    int size();
 }
