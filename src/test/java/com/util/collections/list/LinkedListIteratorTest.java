@@ -3,117 +3,114 @@ package com.util.collections.list;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class LinkedListIteratorTest {
-
-    private LinkedList<Integer> list;
-
-    @BeforeEach
-    void setUp() {
-        list = new LinkedList<>();
-    }
-
-    // ===================== BASIC ITERATION =====================
-
     @Test
-    void testIteratorOverMultipleElements() {
-        list.add(10);
-        list.add(20);
-        list.add(30);
-
-        Iterator<Integer> iterator = list.iterator();
-
-        assertTrue(iterator.hasNext());
-        assertEquals(10, iterator.next());
-
-        assertTrue(iterator.hasNext());
-        assertEquals(20, iterator.next());
-
-        assertTrue(iterator.hasNext());
-        assertEquals(30, iterator.next());
-
-        assertFalse(iterator.hasNext());
-    }
-
-    // ===================== EMPTY LIST =====================
-
-    @Test
-    void testIteratorOnEmptyList() {
-        Iterator<Integer> iterator = list.iterator();
-
-        assertFalse(iterator.hasNext());
-        assertThrows(NoSuchElementException.class, iterator::next);
-    }
-
-    // ===================== SINGLE ELEMENT =====================
-
-    @Test
-    void testIteratorSingleElement() {
-        list.add(99);
-
-        Iterator<Integer> iterator = list.iterator();
-
-        assertTrue(iterator.hasNext());
-        assertEquals(99, iterator.next());
-        assertFalse(iterator.hasNext());
-    }
-
-    // ===================== NEXT WITHOUT HASNEXT =====================
-
-    @Test
-    void testNextWithoutCallingHasNext() {
+    void removeHeadViaIterator() {
+        LinkedList<Integer> list = new LinkedList<>();
         list.add(1);
+        list.add(2);
+        list.add(3);
 
-        Iterator<Integer> iterator = list.iterator();
+        Iterator<Integer> it = list.iterator();
+        assertEquals(1, it.next());
+        it.remove();
 
-        assertEquals(1, iterator.next());
-        assertThrows(NoSuchElementException.class, iterator::next);
+        assertEquals(2, list.get(0));
+        assertEquals(2, list.size());
     }
 
-    // ===================== ITERATION ORDER =====================
-
     @Test
-    void testIterationOrderIsInsertionOrder() {
-        list.add(5);
-        list.add(15);
-        list.add(25);
+    void removeMiddleViaIterator() {
+        LinkedList<Integer> list = new LinkedList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
 
-        Iterator<Integer> iterator = list.iterator();
+        Iterator<Integer> it = list.iterator();
+        it.next(); // 1
+        assertEquals(2, it.next());
+        it.remove();
 
-        assertEquals(5, iterator.next());
-        assertEquals(15, iterator.next());
-        assertEquals(25, iterator.next());
+        assertEquals(1, list.get(0));
+        assertEquals(3, list.get(1));
+        assertEquals(2, list.size());
     }
 
-    // ===================== MULTIPLE ITERATORS =====================
-
     @Test
-    void testMultipleIteratorsIndependent() {
+    void removeTailViaIteratorUpdatesTail() {
+        LinkedList<Integer> list = new LinkedList<>();
         list.add(1);
         list.add(2);
 
-        Iterator<Integer> it1 = list.iterator();
-        Iterator<Integer> it2 = list.iterator();
+        Iterator<Integer> it = list.iterator();
+        it.next(); // 1
+        assertEquals(2, it.next());
+        it.remove();
 
-        assertEquals(1, it1.next());
-        assertEquals(1, it2.next());
-
-        assertEquals(2, it1.next());
-        assertEquals(2, it2.next());
+        assertEquals(1, list.size());
+        assertEquals(1, list.get(0));
+        assertEquals(1, list.get(list.size() - 1));
     }
 
-    // ===================== REMOVE NOT SUPPORTED =====================
+    @Test
+    void removeOnlyElementViaIterator() {
+        LinkedList<Integer> list = new LinkedList<>();
+        list.add(10);
+
+        Iterator<Integer> it = list.iterator();
+        assertEquals(10, it.next());
+        it.remove();
+
+        assertTrue(list.isEmpty());
+    }
 
     @Test
-    void testIteratorRemoveNotSupported() {
+    void removeWithoutNextThrowsIllegalState() {
+        LinkedList<Integer> list = new LinkedList<>();
         list.add(1);
 
-        Iterator<Integer> iterator = list.iterator();
+        Iterator<Integer> it = list.iterator();
+        assertThrows(IllegalStateException.class, it::remove);
+    }
 
-        assertThrows(UnsupportedOperationException.class, iterator::remove);
+    @Test
+    void doubleRemoveThrowsIllegalState() {
+        LinkedList<Integer> list = new LinkedList<>();
+        list.add(1);
+
+        Iterator<Integer> it = list.iterator();
+        it.next();
+        it.remove();
+
+        assertThrows(IllegalStateException.class, it::remove);
+    }
+
+    @Test
+    void nextBeyondEndThrowsException() {
+        LinkedList<Integer> list = new LinkedList<>();
+        list.add(1);
+
+        Iterator<Integer> it = list.iterator();
+        it.next();
+
+        assertThrows(NoSuchElementException.class, it::next);
+    }
+
+    @Test
+    void failFastOnExternalModification() {
+        LinkedList<Integer> list = new LinkedList<>();
+        list.add(1);
+        list.add(2);
+
+        Iterator<Integer> it = list.iterator();
+        list.add(3); // structural modification
+
+        assertThrows(ConcurrentModificationException.class, it::next);
     }
 }

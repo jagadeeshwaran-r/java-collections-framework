@@ -52,6 +52,8 @@ import java.util.Objects;
  */
 abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T> {
 
+    protected int noOfModification = 0;
+
     /**
      * Constructs an {@code AbstractList} with the specified nullability policy.
      *
