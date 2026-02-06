@@ -380,6 +380,61 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
     }
 
     /**
+     * Returns the index of the last occurrence of the specified element
+     * in this list, or {@code -1} if the element is not present.
+     *
+     * <p>
+     * Element comparison is performed using {@link Objects#equals(Object, Object)},
+     * which safely handles {@code null} values. This method
+     * <strong>relies entirely on the correctness of the {@code equals} implementation</strong>
+     * of the elements stored in the list. Subclasses that violate the general
+     * {@code equals} contract may produce unexpected results.
+     * </p>
+     *
+     * <p>
+     * If the element occurs multiple times, this method returns the index
+     * of the <em>rightmost</em> (last) occurrence in the logical iteration order.
+     * </p>
+     *
+     * <p>
+     * This default implementation performs a forward traversal of the list,
+     * updating the last matching index each time the element is found. Subclasses
+     * with efficient random access (e.g., array-backed lists) are encouraged to
+     * override this method to improve performance.
+     * </p>
+     *
+     * <p>
+     * The returned index is zero-based.
+     * </p>
+     *
+     * @param value the element to search for, may be {@code null}
+     * @return the index of the last occurrence of the specified element,
+     *         or {@code -1} if this list does not contain the element
+     *
+     * @implNote
+     * Time complexity: O(n) in the default traversal
+     * Space complexity: O(1)
+     *
+     * @apiNote
+     * This method performs logical equality comparison, not reference comparison.
+     * For identity-based searches, clients must use alternative mechanisms.
+     */
+    @Override
+    public int lastIndexOf(final T value) {
+        int lastIndex = -1;
+        int index = 0;
+
+        for (final T element : this) {
+            if (Objects.equals(value, element)) {
+                lastIndex = index;
+            }
+            index++;
+        }
+
+        return lastIndex;
+    }
+
+    /**
      * Returns the first element in this list that satisfies the given predicate.
      *
      * <p><strong>Implementation Notes:</strong>
