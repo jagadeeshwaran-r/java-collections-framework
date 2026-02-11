@@ -1,5 +1,7 @@
 package com.util.collections.list;
 
+import java.util.function.Predicate;
+
 /**
  * A simplified, ordered collection (sequence) of elements.
  *
@@ -534,5 +536,57 @@ public interface List<T> extends Collection<T> {
      *         or {@code -1} if this list does not contain the element
      */
     int lastIndexOf(T v);
+
+    /**
+     * Returns the first element in this list that satisfies the given predicate.
+     *
+     * <p><strong>Contract:</strong>
+     * This method traverses the list in iteration order and evaluates the provided
+     * {@code condition} against each element. The first element for which the
+     * predicate returns {@code true} is returned immediately.
+     *
+     * <p>If no element satisfies the predicate, this method returns {@code null}.
+     * The list is not modified by this operation.</p>
+     *
+     * <p><strong>Evaluation Semantics:</strong>
+     * <ul>
+     *   <li>Elements are evaluated strictly in list order (from index {@code 0} onward)</li>
+     *   <li>Evaluation stops as soon as a matching element is found</li>
+     *   <li>The predicate is applied at most {@code size()} times</li>
+     * </ul>
+     *
+     * <p><strong>Null Handling:</strong>
+     * <ul>
+     *   <li>The supplied {@code condition} must not be {@code null}</li>
+     *   <li>If {@code null} elements are permitted by the implementation, the
+     *       predicate may receive {@code null} values</li>
+     *   <li>A {@code null} return value may indicate either:
+     *     <ul>
+     *       <li>No matching element was found, or</li>
+     *       <li>The first matching element itself is {@code null}</li>
+     *     </ul>
+     *   </li>
+     * </ul>
+     *
+     * <p><strong>Performance Characteristics:</strong>
+     * Time complexity is implementation-dependent but is typically linear
+     * ({@code O(n)}) for sequential-access lists.
+     *
+     * <p><strong>Design Rationale:</strong>
+     * This method provides a declarative, intention-revealing alternative to
+     * manual iteration for locating elements based on behavioral criteria.
+     * It is conceptually equivalent to a short-circuiting filter operation.
+     *
+     * @param condition a predicate used to test elements
+     * @return the first element that satisfies the predicate, or {@code null}
+     *         if no such element exists
+     *
+     * @throws NullPointerException if {@code condition} is {@code null}
+     *
+     * @apiNote
+     * Callers that need to distinguish between “no match” and “matched {@code null}”
+     * should use {@link #indexOf(Object)} or perform explicit iteration.
+     */
+    T firstWhere(Predicate<T> condition);
 
 }

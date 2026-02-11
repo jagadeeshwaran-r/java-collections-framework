@@ -1,6 +1,7 @@
 package com.util.collections.list;
 
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Abstract base class for {@link List} implementations that centralizes
@@ -431,5 +432,55 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
         }
 
         return lastIndex;
+    }
+
+    /**
+     * Returns the first element in this list that satisfies the given predicate.
+     *
+     * <p><strong>Implementation Notes:</strong>
+     * This implementation performs a linear traversal over the list using its
+     * iteration order. The supplied {@code condition} is applied to each element
+     * in sequence, and evaluation short-circuits immediately upon encountering
+     * the first matching element.</p>
+     *
+     * <p><strong>Failure Semantics:</strong>
+     * The method fails fast if the provided predicate is {@code null}, ensuring
+     * that contract violations are detected early and explicitly rather than
+     * resulting in deferred runtime failures.</p>
+     *
+     * <p><strong>Null Semantics:</strong>
+     * <ul>
+     *   <li>If no element satisfies the predicate, {@code null} is returned</li>
+     *   <li>If {@code null} elements are permitted by the list and the predicate
+     *       matches a {@code null} value, {@code null} may also be returned</li>
+     * </ul>
+     * Callers that need to disambiguate these cases must perform additional checks.</p>
+     *
+     * <p><strong>Side Effects:</strong>
+     * This operation is non-structural and does not modify the state, size,
+     * or ordering of the list.</p>
+     *
+     * <p><strong>Performance Characteristics:</strong>
+     * Time Complexity: O(n) in the worst case, where {@code n} is the list size.<br>
+     * Space Complexity: O(1).</p>
+     *
+     * @param condition a non-null predicate used to test elements
+     * @return the first element satisfying the predicate, or {@code null} if no
+     *         such element exists
+     *
+     * @throws NullPointerException if {@code condition} is {@code null}
+     */
+    @Override
+    public T firstWhere(Predicate<T> condition) {
+        if (condition == null) {
+            throw new NullPointerException("Predicate condition must not be null");
+        }
+
+        for (T v : this) {
+            if (condition.test(v)) {
+                return v;
+            }
+        }
+        return null;
     }
 }
