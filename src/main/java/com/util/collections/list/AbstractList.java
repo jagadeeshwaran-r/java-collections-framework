@@ -1,6 +1,7 @@
 package com.util.collections.list;
 
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Abstract base class for {@link List} implementations that centralizes
@@ -431,5 +432,19 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
         }
 
         return lastIndex;
+    }
+
+    protected abstract List<T> createEmptyList();
+
+    @Override
+    public List<T> where(Predicate<T> condition) {
+        Objects.requireNonNull(condition, "Condition must not be null");
+        List<T> bucket = createEmptyList();
+        for (T v : this) {
+            if (condition.test(v)) {
+                bucket.add(v);
+            }
+        }
+        return bucket;
     }
 }

@@ -1,5 +1,7 @@
 package com.util.collections.list;
 
+import java.util.function.Predicate;
+
 /**
  * A simplified, ordered collection (sequence) of elements.
  *
@@ -535,4 +537,5 @@ public interface List<T> extends Collection<T> {
      */
     int lastIndexOf(T v);
 
+    List<T> where(Predicate<T> condition);
 }
