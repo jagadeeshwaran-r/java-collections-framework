@@ -31,6 +31,7 @@ import java.util.function.Predicate;
  * <p>Thread-safety is not implied and must be explicitly provided by
  * implementations when required.
  *
+ * @author Jagadeesh Waran
  * @param <T> the type of elements maintained in this list
  */
 public interface List<T> extends Collection<T> {
