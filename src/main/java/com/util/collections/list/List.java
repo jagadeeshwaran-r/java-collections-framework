@@ -362,5 +362,5 @@ public interface List<T> extends Collection<T> {
      * @return a list containing all elements of this list that match the given predicate
      * @throws NullPointerException if the specified predicate is {@code null}
      */
-    List<T> where(Predicate<T> condition);
+    List<T> where(Predicate<? super T> condition);
 }
