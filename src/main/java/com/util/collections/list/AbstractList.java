@@ -478,9 +478,8 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
         Objects.requireNonNull(condition, "Condition must not be null");
         List<T> bucket = createEmptyList();
         for (T v : this)
-            if (condition.test(v)) {
+            if (condition.test(v))
                 bucket.add(v);
-            }
         return bucket;
     }
 }
