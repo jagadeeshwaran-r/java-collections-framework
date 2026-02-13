@@ -435,6 +435,55 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
     }
 
     /**
+     * Creates and returns a new, empty list instance of the same
+     * concrete type as this list.
+     *
+     * <p>This method is intended for use by internal operations that
+     * need to create a new list (for example, filtering or transformation
+     * operations) while preserving implementation-specific characteristics.
+     *
+     * <p>The returned list must be empty and ready to accept elements.
+     *
+     * @return a new empty list
+     *
+     * @implSpec
+     * Subclasses must return a new, independent list instance.
+     * The returned list should have the same ordering semantics and
+     * null-handling behavior as this list.
+     */
+    protected abstract List<T> createEmptyList();
+
+    /**
+     * Returns a list consisting of the elements of this list that satisfy
+     * the given predicate.
+     *
+     * <p>The elements are evaluated in the order of iteration of this list.
+     * The returned list preserves the encounter order of the elements that
+     * match the predicate.
+     *
+     * <p>The returned list is independent of this list unless otherwise
+     * specified by the implementation.
+     *
+     * @param condition the predicate used to test elements
+     * @return a list containing the elements of this list that match
+     *         the given predicate
+     * @throws NullPointerException if the specified predicate is {@code null}
+     *
+     * @implSpec
+     * The default implementation iterates over this list and adds each
+     * element that satisfies the predicate to a newly created list.
+     */
+    @Override
+    public List<T> where(Predicate<? super T> condition) {
+        Objects.requireNonNull(condition, "Condition must not be null");
+        List<T> bucket = createEmptyList();
+        for (T v : this)
+            if (condition.test(v))
+                bucket.add(v);
+        return bucket;
+    }
+
+    /**
      * Returns the first element in this list that satisfies the given predicate.
      *
      * <p><strong>Implementation Notes:</strong>
