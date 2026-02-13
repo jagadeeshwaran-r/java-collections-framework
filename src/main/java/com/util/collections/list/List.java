@@ -1,134 +1,104 @@
 package com.util.collections.list;
 
+import java.util.function.Predicate;
+
 /**
- * A simplified, ordered collection (sequence) of elements.
+ * Represents an ordered collection of elements.
  *
- * <p>This interface defines the core contract for list-like data structures
- * that maintain elements in a positional order and support indexed access,
- * insertion, removal, and traversal.
+ * <p>A list defines a positional structure where each element occupies
+ * a specific index. The position of an element is stable relative to
+ * the ordering rules of the implementation and forms part of the list’s
+ * observable contract.
  *
- * <p><strong>Ordering Semantics:</strong>
- * Elements are stored and accessed in a well-defined sequence. The position
- * of each element is determined by its index, starting from {@code 0}.
+ * <p>Unlike the root {@code Collection} abstraction, a list introduces
+ * ordering semantics. Elements are arranged in a linear sequence and
+ * may appear multiple times unless otherwise restricted by a concrete
+ * implementation.
  *
- * <p><strong>Null Handling:</strong>
- * Whether {@code null} elements are permitted is implementation-specific.
- * Implementations are expected to document and enforce their nullability
- * policy.
+ * <p>This interface does not mandate mutability. Some implementations
+ * may allow structural modification, while others may represent
+ * immutable or fixed-size views. Mutation capabilities, if supported,
+ * are defined by the implementation.
  *
- * <p><strong>Iteration:</strong>
- * This interface extends {@link Iterable}, allowing implementations to be
- * traversed using enhanced {@code for} loops.
+ * <p>Index-based access is a defining characteristic of a list.
+ * Implementations may vary in how efficiently indexed operations are
+ * performed depending on their underlying structure.
  *
- * <p><strong>Concurrency:</strong>
- * Implementations are not required to be thread-safe. External synchronization
- * is required if concurrent access is needed.
+ * <p>The purpose of this abstraction is to model sequential data with
+ * positional awareness while remaining independent of storage strategy
+ * or performance characteristics.
  *
- * <p><strong>Design Scope:</strong>
- * This interface intentionally exposes a minimal API surface, focusing on
- * essential list operations without advanced features such as sublists,
- * iterators with removal, or bulk operations.
+ * <p>Thread-safety is not implied and must be explicitly provided by
+ * implementations when required.
  *
  * @author Jagadeesh Waran
+ * @param <T> the type of elements maintained in this list
  */
 public interface List<T> extends Collection<T> {
 
     /**
      * Appends the specified element to the end of this list.
      *
-     * <p><strong>Contract:</strong>
-     * After this method returns successfully:
-     * <ul>
-     *   <li>The element is present in the list</li>
-     *   <li>The size of the list is increased by one</li>
-     *   <li>The relative order of existing elements is preserved</li>
-     * </ul>
+     * <p>After this method returns successfully, the element will be
+     * added to the end of the list, the size will increase by one,
+     * and the relative order of existing elements will be preserved.
      *
-     * <p><strong>Null Handling:</strong>
-     * Whether {@code null} elements are permitted is implementation-specific.
-     * Implementations must enforce and document their nullability policy.
+     * <p>This operation modifies the list structurally. Whether null
+     * elements are permitted is implementation-specific.
      *
-     * <p><strong>Performance Characteristics:</strong>
-     * No guarantees are made regarding time complexity. Implementations may
-     * provide constant-time or linear-time performance depending on their
-     * internal structure.
+     * <p>No guarantees are made regarding performance. The time
+     * complexity depends on the implementation.
      *
-     * @param val the element to be appended
-     * @return {@code true} if the list was modified as a result of this call
-     * @throws IllegalArgumentException if {@code val} is {@code null} and the
-     *         implementation does not permit {@code null} elements
+     * @param val the element to be appended to this list
+     * @return true if this list was modified as a result of this call
+     * @throws IllegalArgumentException if null values are not permitted
+     *         and the specified element is null
      */
     boolean add(T val);
 
     /**
      * Inserts the specified element at the specified position in this list.
      *
-     * <p><strong>Contract:</strong>
-     * After this method returns successfully:
-     * <ul>
-     *   <li>The element is present at position {@code index}</li>
-     *   <li>The size of the list is increased by one</li>
-     *   <li>Elements previously at {@code index} and beyond are shifted one
-     *       position to the right</li>
-     *   <li>The relative order of existing elements is preserved</li>
-     * </ul>
+     * <p>The element is inserted at the given index, and any elements
+     * currently at that position, or after it are shifted one position
+     * to the right. The size of the list increases by one.
      *
-     * <p><strong>Index Semantics:</strong>
-     * <ul>
-     *   <li>{@code index == 0} inserts the element at the beginning of the list</li>
-     *   <li>{@code index == size()} inserts the element at the end of the list</li>
-     * </ul>
+     * <p>Indices are zero-based. An index of 0 inserts at the beginning
+     * of the list, and an index equal to size() inserts at the end.
      *
-     * <p><strong>Null Handling:</strong>
-     * Whether {@code null} elements are permitted is implementation-specific.
-     * Implementations must enforce and document their nullability policy.
+     * <p>This operation modifies the list structurally. Whether null
+     * elements are permitted is implementation-specific.
      *
-     * <p><strong>Performance Characteristics:</strong>
-     * No guarantees are made regarding time complexity. Implementations may
-     * provide different performance characteristics depending on their internal
-     * structure.
+     * <p>No guarantees are made regarding performance. The time complexity
+     * depends on the implementation.
      *
-     * @param val   the element to be inserted
+     * @param val the element to be inserted
      * @param index the position at which the element is to be inserted
-     * @return {@code true} if the list was modified as a result of this call
-     * @throws IndexOutOfBoundsException if {@code index} is outside the range
-     *         {@code [0, size()]}
-     * @throws IllegalArgumentException if {@code val} is {@code null} and the
-     *         implementation does not permit {@code null} elements
+     * @return true if this list was modified as a result of this call
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         (index < 0 or index > size())
+     * @throws IllegalArgumentException if null values are not permitted
+     *         and the specified element is null
      */
     boolean add(T val, int index);
 
     /**
      * Returns the element at the specified position in this list.
      *
-     * <p><strong>Contract:</strong>
-     * This method provides positional (index-based) access to elements stored
-     * in this list. The returned element corresponds to the element currently
-     * stored at the specified {@code index}.
+     * <p>Indices are zero-based. The valid range is from 0 (inclusive)
+     * to size() (exclusive).
      *
-     * <p><strong>Index Semantics:</strong>
-     * Indices are zero-based. Valid indices range from {@code 0} (inclusive)
-     * to {@code size() - 1} (inclusive).
+     * <p>This method provides positional access to elements and does not
+     * modify the list. If null elements are permitted by the implementation,
+     * this method may return null.
      *
-     * <p><strong>Behavior:</strong>
-     * <ul>
-     *   <li>The list is not structurally modified by this operation</li>
-     *   <li>The relative order of elements remains unchanged</li>
-     * </ul>
+     * <p>No guarantees are made regarding performance. Access time depends
+     * on the implementation.
      *
-     * <p><strong>Null Semantics:</strong>
-     * If {@code null} elements are permitted by the implementation, this method
-     * may return {@code null}.
-     *
-     * <p><strong>Performance Characteristics:</strong>
-     * No guarantees are made regarding time complexity. Implementations may
-     * provide constant-time or linear-time access depending on their internal
-     * representation.
-     *
-     * @param index the position of the element to return
+     * @param index the index of the element to return
      * @return the element at the specified position in this list
-     * @throws IndexOutOfBoundsException if {@code index} is outside the valid
-     *         range {@code [0, size())}
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         (index < 0 or index >= size())
      */
     T get(int index);
 
@@ -136,127 +106,89 @@ public interface List<T> extends Collection<T> {
      * Removes the first occurrence of the specified element from this list,
      * if it is present.
      *
-     * <p><strong>Contract:</strong>
-     * After this method returns:
-     * <ul>
-     *   <li>If the element was present, exactly one matching element is removed</li>
-     *   <li>The size of the list is decreased by one if removal occurs</li>
-     *   <li>The relative order of the remaining elements is preserved</li>
-     * </ul>
+     * <p>If the element is found, exactly one matching element is removed,
+     * the size of the list decreases by one, and the relative order of the
+     * remaining elements is preserved. If the element is not present, the
+     * list remains unchanged.
      *
-     * <p>If the list does not contain the specified element, it remains unchanged.
+     * <p>Equality is determined using the equals' method.
      *
-     * <p><strong>Equality Semantics:</strong>
-     * Element comparison is performed using {@code equals}, not reference equality.
+     * <p>Whether null elements are permitted is implementation-specific.
      *
-     * <p><strong>Null Handling:</strong>
-     * Whether {@code null} values are permitted is implementation-specific.
-     * Implementations must enforce and document their nullability policy.
-     *
-     * <p><strong>Performance Characteristics:</strong>
-     * No guarantees are made regarding time complexity. Implementations may
-     * provide different performance characteristics depending on their internal
-     * structure.
+     * <p>No guarantees are made regarding performance. The time complexity
+     * depends on the implementation.
      *
      * @param val the element to be removed from this list
-     * @return {@code true} if an element was removed as a result of this call;
-     *         {@code false} otherwise
-     * @throws IllegalArgumentException if {@code val} is {@code null} and the
-     *         implementation does not permit {@code null} elements
+     * @return true if this list was modified as a result of this call;
+     *         otherwise false
+     * @throws IllegalArgumentException if null values are not permitted
+     *         and the specified element is null
      */
     boolean remove(Object val);
 
     /**
-     * Returns {@code true} if this list contains the specified element.
+     * Returns true if this list contains the specified element.
      *
-     * <p><strong>Contract:</strong>
-     * <ul>
-     *   <li>Returns {@code true} if and only if at least one element in the list
-     *       is {@code equals()} to the specified element</li>
-     *   <li>The list is not modified by this operation</li>
-     *   <li>Relative order and content of elements remain unchanged</li>
-     * </ul>
+     * <p>More formally, this method returns true if and only if the list
+     * contains at least one element equal to the specified value.
+     * Equality is determined using the equals' method.
      *
-     * <p><strong>Equality Semantics:</strong>
-     * Element comparison is performed using {@code equals}, not reference equality.
+     * <p>This method does not modify the list.
      *
-     * <p><strong>Null Handling:</strong>
-     * Whether {@code null} values are permitted is implementation-specific.
-     * Implementations must enforce and document their nullability policy.
+     * <p>Whether null elements are permitted is implementation-specific.
      *
-     * <p><strong>Performance Characteristics:</strong>
-     * No guarantees are made regarding time complexity. Implementations may
-     * provide constant-time or linear-time performance depending on their internal
-     * structure.
+     * <p>No guarantees are made regarding performance. The time complexity
+     * depends on the implementation.
      *
      * @param val the element whose presence is to be tested
-     * @return {@code true} if the list contains at least one element equal to {@code val};
-     *         {@code false} otherwise
-     * @throws IllegalArgumentException if {@code val} is {@code null} and the
-     *         implementation does not permit {@code null} elements
+     * @return true if this list contains the specified element;
+     *         otherwise false
+     * @throws IllegalArgumentException if null values are not permitted
+     *         and the specified element is null
      */
     boolean contains(T val);
 
     /**
-     * Returns the number of elements currently in this list.
+     * Returns the number of elements in this list.
      *
-     * <p><strong>Contract:</strong>
-     * <ul>
-     *   <li>The returned value is always non-negative</li>
-     *   <li>The value reflects the number of elements that would be returned
-     *       by traversing the list via an iterator or indexed access</li>
-     *   <li>The list is not modified by this operation</li>
-     * </ul>
+     * <p>The returned value is always non-negative and reflects the number
+     * of elements that would be returned by iterating over the list.
+     * This method does not modify the list.
      *
-     * <p><strong>Performance Characteristics:</strong>
-     * No guarantees are made regarding time complexity. Implementations may
-     * provide constant-time or linear-time performance depending on internal
-     * structure.
+     * <p>No guarantees are made regarding performance. The time complexity
+     * depends on the implementation.
      *
      * @return the number of elements in this list
      */
     int size();
 
     /**
-     * Returns {@code true} if this list contains no elements.
+     * Returns true if this list contains no elements.
      *
-     * <p><strong>Contract:</strong>
-     * <ul>
-     *   <li>Returns {@code true} if and only if {@link #size()} is {@code 0}</li>
-     *   <li>The list is not modified by this operation</li>
-     * </ul>
+     * <p>This method returns true if and only if size() is 0.
+     * The list is not modified by this operation.
      *
-     * <p><strong>Performance Characteristics:</strong>
-     * No guarantees are made regarding time complexity. Implementations may
-     * provide constant-time or linear-time performance depending on internal
-     * structure.
+     * <p>No guarantees are made regarding performance. The time
+     * complexity depends on the implementation.
      *
-     * @return {@code true} if the list contains no elements, {@code false} otherwise
+     * @return true if this list contains no elements; otherwise false
      */
     boolean isEmpty();
 
     /**
      * Removes all elements from this list.
      *
-     * <p><strong>Contract:</strong>
-     * <ul>
-     *   <li>After this method returns, {@link #size()} will return {@code 0}</li>
-     *   <li>{@link #isEmpty()} will return {@code true}</li>
-     *   <li>All previously contained elements are considered removed and will
-     *       no longer be accessible via iteration or indexed access</li>
-     *   <li>The list is structurally modified to reflect an empty state</li>
-     * </ul>
+     * <p>After this method returns, the list will be empty.
+     * Calling size() will return 0 and isEmpty() will return true.
+     * Elements previously contained in the list will no longer be
+     * accessible through iteration or indexed access.
      *
-     * <p><strong>Null Handling:</strong>
-     * Implementations must properly handle removal of {@code null} elements if
-     * they were previously permitted.
+     * <p>This operation performs a structural modification.
      *
-     * <p><strong>Performance Characteristics:</strong>
-     * No guarantees are made regarding time complexity. Implementations may
-     * provide constant-time or linear-time performance depending on internal
-     * structure.
+     * <p>No guarantees are made regarding performance. The time complexity
+     * depends on the implementation.
      *
-     * @throws UnsupportedOperationException if the list does not support
+     * @throws UnsupportedOperationException if this list does not support
      *         element removal
      */
     void clear();
@@ -290,102 +222,46 @@ public interface List<T> extends Collection<T> {
     T set(int index, T val);
 
     /**
-     * Returns {@code true} if this list contains all the elements
-     * provided by the specified {@link Iterable}.
-     * <p>
-     * More formally, returns {@code true} if and only if for every element
-     * {@code e} in the given {@code iterable}, this list contains at least
-     * one element {@code o} such that:
-     * <pre>
-     *     o.equals(e)
-     * </pre>
-     * or both {@code o} and {@code e} are {@code null}.
-     * <p>
-     * Therefore, the correctness of this operation depends on a proper
-     * implementation of the {@link Object#equals(Object)} method for
-     * the element type {@code T}. Elements that do not correctly override
-     * {@code equals(Object)} may lead to unexpected results.
-     * <p>
-     * The order of elements in the specified {@code iterable} is not significant,
-     * and duplicate elements are ignored. This operation does not modify
-     * the state of the list.
+     * Returns {@code true} if this list contains all elements of the specified
+     * {@link Iterable}.
+     * Returns true if this list contains all elements of the specified iterable.
      *
-     * @param iterable the {@code Iterable} whose elements are to be checked
-     *                 for containment in this list
-     * @return {@code true} if this list contains all elements of the specified
-     *         {@code iterable}
+     * <p>More formally, this method returns true if for every element in the
+     * given iterable, this list contains at least one equal element.
+     * Equality is determined using the equals' method. Two null elements
+     * are considered equal.
      *
-     * @throws NullPointerException if the specified {@code iterable} is {@code null}
+     * <p>The order of elements in the iterable does not affect the result,
+     * and duplicate elements are ignored. This method does not modify
+     * the list.
+     *
+     * <p>The correctness of this operation depends on a proper implementation
+     * of the equals method for the element type.
+     *
+     * @param iterable the elements to check for containment
+     * @return true if this list contains all elements of the iterable;
+     *         otherwise false
+     * @throws NullPointerException if the specified iterable is null
      *
      * @implSpec
-     * This implementation iterates over the specified {@code iterable} and
-     * delegates containment checks to {@link #contains(Object)}, which relies
-     * on {@code equals(Object)} for element comparison.
-     *
-     * @apiNote
-     * Clients should ensure that the {@code equals(Object)} contract
-     * (reflexive, symmetric, transitive, consistent, and non-null comparison)
-     * is properly upheld by elements stored in this list.
+     * The default implementation iterates over the iterable and calls
+     * contains(Object) for each element.
      */
     boolean containsAll(Iterable<T> iterable);
 
     /**
-     * Appends all elements provided by the specified {@link Iterable} to the end
-     * of this list, in the order they are encountered during iteration.
+     * Appends all elements from the given iterable to the end of this list,
+     * preserving their iteration order.
      *
-     * <h2>Contract</h2>
-     * <p>
-     * After this method returns successfully:
-     * </p>
-     * <ul>
-     *   <li>All elements from the given {@code iterable} are present in this list</li>
-     *   <li>The relative order of existing elements is preserved</li>
-     *   <li>The relative order of newly added elements matches the iteration order
-     *       of the provided {@code iterable}</li>
-     *   <li>The size of the list is increased by the number of elements added</li>
-     * </ul>
+     * <p>If this list is modified as a result of this call, its size increases
+     * by the number of elements successfully added.
      *
-     * <h2>Null Handling</h2>
-     * <p>
-     * Whether {@code null} elements are permitted is implementation-specific.
-     * If {@code null} values are not allowed, implementations must reject
-     * {@code null} elements encountered during iteration.
-     * </p>
+     * <p>Null handling and structural modification behavior are
+     * implementation-specific.
      *
-     * <h2>Failure Semantics</h2>
-     * <p>
-     * This operation is <strong>not required to be atomic</strong>. If an exception
-     * occurs while iterating over the supplied {@code iterable}, elements added
-     * prior to the failure may remain in the list.
-     * </p>
-     *
-     * <h2>Structural Modification</h2>
-     * <p>
-     * This method is a <em>structural modification</em> and may invalidate existing
-     * iterators, depending on the implementation.
-     * </p>
-     *
-     * <h2>Performance Characteristics</h2>
-     * <p>
-     * No guarantees are made regarding time or space complexity. Performance
-     * characteristics depend on both the list implementation and the nature
-     * of the provided {@code iterable}.
-     * </p>
-     *
-     * @param iterable the elements to be appended to this list
-     * @return {@code true} if the list was modified as a result of this call
-     *
-     * @throws NullPointerException if {@code iterable} is {@code null}
-     * @throws IllegalArgumentException if a {@code null} element is encountered
-     *         and the implementation does not permit {@code null} values
-     *
-     * @implSpec
-     * Implementations may delegate this operation to repeated invocations of
-     * {@link #add(Object)} to ensure consistent validation and ordering semantics.
-     *
-     * @apiNote
-     * Clients should not assume transactional behavior. If atomicity is required,
-     * it must be enforced externally by the caller or by a specialized implementation.
+     * @param iterable the elements to append
+     * @return {@code true} if this list was modified
+     * @throws NullPointerException if {@code elements} is {@code null}
      */
     boolean addAll(Iterable<T> iterable);
 
@@ -426,113 +302,66 @@ public interface List<T> extends Collection<T> {
     T[] toArray(T[] a);
 
     /**
-     * Returns an array containing all elements of this list in proper iteration
-     * order.
+     * Returns an array containing all elements of this list in iteration order.
      *
-     * <p>
-     * The returned array is a newly allocated {@code Object[]} and is independent
-     * of this list. Modifications to the returned array will not affect the list,
-     * and modifications to the list will not be reflected in the returned array.
-     * </p>
+     * <p>The returned array is newly allocated and independent of this list.
+     * Changes to the returned array will not affect the list, and changes to
+     * the list will not be reflected in the array.
      *
-     * <p>
-     * The elements are returned in the order defined by this list's iterator.
-     * </p>
+     * <p>The elements appear in the order defined by this list's iterator.
      *
      * @return an array containing all elements of this list
-     *
      * @see #toArray(Object[])
      * @see java.util.Collection#toArray()
      */
     Object[] toArray();
 
     /**
-     * Returns the index of the first occurrence of the specified value in this list,
-     * or {@code -1} if this list does not contain the value.
+     * Returns the index of the first occurrence of the specified element
+     * in this list, or {@code -1} if this list does not contain the element.
      *
-     * <p><strong>Contract:</strong>
-     * This method searches the list in iteration order and returns the lowest
-     * index {@code i} such that {@code Objects.equals(get(i), v)} is {@code true}.
-     * If no such element exists, {@code -1} is returned.
-     * </p>
+     * <p>
+     * More formally, returns the lowest index {@code i} such that the element
+     * at position {@code i} is equal to the specified element, or
+     * {@code -1} if there is no such index.
      *
-     * <p><strong>Equality Semantics:</strong>
-     * Equality is determined using {@link java.util.Objects#equals(Object, Object)} to ensure
-     * null-safe comparison and consistency with {@link #contains(Object)}.
-     * </p>
+     * <p>
+     * If the list permits {@code null} elements, this method may search
+     * for {@code null}.
      *
-     * <p><strong>Behavioral Guarantees:</strong>
-     * <ul>
-     *   <li>Returns the index of the <em>first</em> matching element</li>
-     *   <li>Does not modify the list</li>
-     *   <li>Returns {@code -1} if the value is not present</li>
-     * </ul>
-     *
-     * <p><strong>Performance Notes:</strong>
-     * The time complexity of this operation depends on the concrete list
-     * implementation. Sequential-access lists typically require linear time,
-     * while indexed or optimized structures may provide faster lookups.
-     * </p>
-     *
-     * <p><strong>Null Handling:</strong>
-     * The behavior when {@code v} is {@code null} is defined by the list’s
-     * nullability policy. If {@code null} values are not permitted, implementations
-     * may reject {@code null} inputs.
-     * </p>
-     *
-     * @param v the value whose index is to be determined
-     * @return the zero-based index of the first occurrence of the specified value,
-     * or {@code -1} if this list does not contain the value
-     * @apiNote This method is primarily intended for positional lookup and should not be
-     * used as a substitute for {@link #contains(Object)} when only membership
-     * testing is required. Implementations are encouraged to ensure that
-     * {@code indexOf} and {@code contains} remain semantically consistent.
+     * @param v the element to search for
+     * @return the index of the first occurrence of the specified element,
+     *         or {@code -1} if this list does not contain the element
      */
     int indexOf(T v);
 
     /**
      * Returns the index of the last occurrence of the specified element
-     * in this list, or {@code -1} if this list does not contain the element.
+     * in this list, or {@code -1} if this list does not contain it.
      *
-     * <p>
-     * Element comparison is performed using {@link Object#equals(Object)}.
-     * This method <strong>relies entirely on the correctness of the
-     * {@code equals} implementation</strong> of the elements stored in the list.
-     * Implementations that violate the general {@code equals} contract may cause
-     * this method to return unexpected or inconsistent results.
-     * </p>
+     * <p>If the element appears multiple times, the highest index is returned.
+     * Element comparison follows the list’s equality semantics.
      *
-     * <p>
-     * A {@code null} value is considered a valid search target and will match
-     * {@code null} elements if this list permits {@code null} values.
-     * </p>
-     *
-     * <p>
-     * If the element occurs multiple times, this method returns the index
-     * of the <em>rightmost</em> (last) occurrence.
-     * </p>
-     *
-     * <p>
-     * The returned index is zero-based and corresponds to the logical ordering
-     * of elements as exposed by this list’s iteration order.
-     * </p>
-     *
-     * <p>
-     * Performance characteristics depend on the concrete list implementation.
-     * For most list implementations, this operation runs in linear time
-     * {@code O(n)}.
-     * </p>
-     *
-     * @apiNote
-     * This method performs logical equality comparison, not reference comparison.
-     * It should be used only when element equivalence is well-defined via
-     * {@code equals}. For identity-based searches, clients must use alternative
-     * mechanisms.
-     *
-     * @param v the element to search for, may be {@code null}
-     * @return the index of the last occurrence of the specified element,
-     *         or {@code -1} if this list does not contain the element
+     * @param element the element to search for, may be {@code null}
+     * @return the index of the last matching element, or {@code -1} if not found
      */
-    int lastIndexOf(T v);
+    int lastIndexOf(T element);
 
+    /**
+     * Returns a list consisting of the elements of this list that satisfy
+     * the given predicate.
+     *
+     * <p>The elements are evaluated in the order of iteration of this list.
+     * The returned list preserves the encounter order of the elements that
+     * match the predicate.
+     *
+     * <p>The returned list is independent of this list unless otherwise
+     * specified by the implementation. Changes to the returned list will not
+     * affect this list, and vice versa.
+     *
+     * @param condition the predicate used to test elements
+     * @return a list containing all elements of this list that match the given predicate
+     * @throws NullPointerException if the specified predicate is {@code null}
+     */
+    List<T> where(Predicate<? super T> condition);
 }

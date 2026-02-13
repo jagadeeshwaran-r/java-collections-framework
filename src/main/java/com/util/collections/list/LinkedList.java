@@ -110,6 +110,11 @@ public class LinkedList<T> extends AbstractList<T> {
         super(isNullable);
     }
 
+    @Override
+    protected com.util.collections.list.List<T> createEmptyList() {
+        return new LinkedList<>();
+    }
+
     //==================== Removal Operations ====================================================//
 
     /**
