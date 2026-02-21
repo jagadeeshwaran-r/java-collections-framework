@@ -4,91 +4,57 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 
+/**
+ * Skeletal implementation of the {@link Collection} interface.
+ *
+ * <p>This abstract class exists to reduce the effort required to
+ * implement the {@code Collection} interface. It provides common
+ * implementations of core methods such as {@link #equals(Object)},
+ * {@link #hashCode()}, {@link #toString()}, and shared utility
+ * operations used by concrete collections.
+ *
+ * <p>Concrete subclasses are expected to define the underlying
+ * storage mechanism and provide an {@link java.util.Iterator}
+ * implementation. Subclasses must also ensure that the collection
+ * size is correctly maintained when elements are added or removed.
+ *
+ * <p>This class centralizes reusable logic to promote consistency
+ * across different collection implementations and to avoid code
+ * duplication.
+ *
+ * @param <T> the type of elements maintained by this collection
+ * @author Jagadeesh Waran
+ */
 public abstract class AbstractCollection<T> implements Collection<T> {
 
     protected AbstractCollection(){}
 
     /**
-     * The number of elements currently contained in this collection.
+     * The number of elements in this collection.
      *
-     * <p>
-     * This field represents the logical size of the collection and must accurately
-     * reflect the number of elements exposed through iteration.
-     * </p>
-     *
-     * <p>
-     * Concrete subclasses are responsible for maintaining this value whenever
-     * elements are added or removed.
-     * </p>
-     *
-     * <p>
-     * This field is intentionally {@code protected} to allow direct access by
-     * subclasses while preventing exposure through the public API.
-     * </p>
+     * <p>Subclasses must update this field when elements
+     * are added or removed.
      */
     protected int count;
 
     /**
-     * Indicates whether this collection permits {@code null} elements.
+     * Indicates whether {@code null} elements are permitted.
      *
-     * <p>
-     * If {@code true}, {@code null} values are considered valid elements and are
-     * allowed to be stored, traversed, and returned by this collection.
-     * </p>
-     *
-     * <p>
-     * If {@code false}, attempts to insert {@code null} elements must be rejected
-     * by concrete implementations, typically by throwing an
-     * {@link IllegalArgumentException}.
-     * </p>
-     *
-     * <p>
-     * This policy is enforced consistently across all operations that accept
-     * external input, ensuring predictable null-handling semantics.
-     * </p>
+     * <p>If {@code false}, attempts to insert {@code null}
+     * should result in an exception in concrete implementations.
      */
     protected boolean isNullable;
 
     /**
-     * Determines whether this collection contains an element equal to the
-     * specified value.
+     * Returns {@code true} if this collection contains an element
+     * equal to the specified value.
      *
-     * <p>
-     * Element comparison is performed using {@link Objects#equals(Object, Object)}
-     * to ensure safe and consistent equality semantics, including support for
-     * {@code null} values when permitted by the collection’s nullability policy.
-     * </p>
+     * <p>Comparison is performed using {@link Objects#equals(Object, Object)}.
+     * If {@code null} elements are not permitted and the given value
+     * is {@code null}, this method returns {@code false}.
      *
-     * <p>
-     * If this collection does not allow {@code null} elements and the specified
-     * value is {@code null}, this method returns {@code false} immediately without
-     * performing iteration.
-     * </p>
-     *
-     * <h3>Behavioral Guarantees</h3>
-     * <ul>
-     *   <li>Does not modify the collection</li>
-     *   <li>Preserves iteration order</li>
-     *   <li>Respects the collection’s nullability contract</li>
-     * </ul>
-     *
-     * <h3>Performance Characteristics</h3>
-     * <ul>
-     *   <li>Best case: {@code O(1)} (first element matches)</li>
-     *   <li>Worst case: {@code O(n)} where {@code n} is the number of elements</li>
-     * </ul>
-     *
-     * <h3>Design Notes</h3>
-     * <ul>
-     *   <li>This method serves as a protected utility for implementing higher-level
-     *       containment operations</li>
-     *   <li>Concrete subclasses inherit consistent containment semantics without
-     *       duplicating logic</li>
-     * </ul>
-     *
-     * @param val the value whose presence is to be tested
-     * @return {@code true} if an equal element exists in this collection;
-     *         {@code false} otherwise
+     * @param val the value to test
+     * @return {@code true} if an equal element exists
      */
     protected boolean hasElement(T val) {
         if (!isNullable && val == null)
@@ -101,45 +67,13 @@ public abstract class AbstractCollection<T> implements Collection<T> {
     }
 
     /**
-     * Determines whether this collection contains <em>all</em> elements provided
-     * by the specified {@link Iterable}.
+     * Returns {@code true} if this collection contains all elements
+     * from the given {@link Iterable}.
      *
-     * <p>
-     * This method iterates over the supplied {@code iterable} and verifies that
-     * each element is present in this collection using {@link #hasElement(Object)}.
-     * </p>
+     * <p>This method stops at the first missing element.
      *
-     * <p>
-     * The evaluation is <em>fail-fast</em>: the method returns {@code false}
-     * immediately upon encountering an element that is not contained in this
-     * collection.
-     * </p>
-     *
-     * <h3>Behavioral Guarantees</h3>
-     * <ul>
-     *   <li>Does not modify the collection</li>
-     *   <li>Preserves consistent containment and null-handling semantics</li>
-     *   <li>Fails fast on the first missing element</li>
-     * </ul>
-     *
-     * <h3>Performance Characteristics</h3>
-     * <ul>
-     *   <li>Time Complexity: {@code O(n × m)}, where {@code n} is the number of
-     *       elements in this collection and {@code m} is the number of elements
-     *       in the provided iterable</li>
-     *   <li>Space Complexity: {@code O(1)}</li>
-     * </ul>
-     *
-     * <h3>Design Notes</h3>
-     * <ul>
-     *   <li>Centralizes containment logic for reuse by public APIs</li>
-     *   <li>Relies on {@link Object#equals(Object)} for correctness</li>
-     *   <li>Intended for internal use by abstract and concrete collection
-     *       implementations</li>
-     * </ul>
-     *
-     * @param iterable the elements whose presence is to be verified
-     * @return {@code true} if all elements are present; {@code false} otherwise
+     * @param iterable the elements to check
+     * @return {@code true} if all elements are present
      * @throws NullPointerException if {@code iterable} is {@code null}
      */
     protected boolean hasAllElements(Iterable<T> iterable) {
@@ -151,50 +85,17 @@ public abstract class AbstractCollection<T> implements Collection<T> {
     }
 
     /**
-     * Copies the elements of this collection into the provided array, following
-     * the semantics defined by {@link java.util.Collection#toArray(Object[])}.
+     * Copies the elements of this collection into the provided array.
      *
-     * <p>
-     * If the supplied array is large enough to hold all elements, the elements
-     * are written into it in iteration order and the array is returned. If the
-     * array is larger than required, the element immediately following the last
-     * collection element is set to {@code null} as mandated by the Java
-     * Collection specification.
-     * </p>
+     * <p>If the array is too small, a new array of the same runtime
+     * type is allocated. If the array is larger than needed, the
+     * element immediately after the last entry is set to {@code null}.
      *
-     * <p>
-     * If the supplied array is too small, a new array of the <em>same runtime
-     * component type</em> is allocated and populated with the elements of this
-     * collection. This guarantees that the returned array preserves the caller’s
-     * expected type.
-     * </p>
+     * <p>Elements are stored in iteration order.
      *
-     * <h3>Behavioral Guarantees</h3>
-     * <ul>
-     *   <li>Preserves element iteration order</li>
-     *   <li>Preserves runtime array type</li>
-     *   <li>Does not expose internal storage representation</li>
-     *   <li>Complies fully with the {@code Collection.toArray(T[])} contract</li>
-     * </ul>
-     *
-     * <h3>Performance Characteristics</h3>
-     * <ul>
-     *   <li>Time Complexity: {@code O(n)} where {@code n} is the number of elements</li>
-     *   <li>Space Complexity: {@code O(n)} only if array reallocation is required</li>
-     * </ul>
-     *
-     * <h3>Design Notes</h3>
-     * <ul>
-     *   <li>This method relies exclusively on the collection’s iterator and makes
-     *       no assumptions about the underlying storage structure</li>
-     *   <li>Centralizing this logic ensures consistent {@code toArray} behavior
-     *       across all concrete collection implementations</li>
-     * </ul>
-     *
-     * @param a the destination array into which the elements of this collection
-     *          are to be stored, if it is large enough
+     * @param a the destination array
      * @return an array containing all elements of this collection
-     * @throws NullPointerException if the specified array is {@code null}
+     * @throws NullPointerException if {@code a} is {@code null}
      */
     protected T[] finishToArray(T[] a) {
         if (a.length < count)
@@ -212,48 +113,18 @@ public abstract class AbstractCollection<T> implements Collection<T> {
     }
 
     /**
-     * Computes the hash code for this list based on its elements and their order.
+     * Returns the hash code for this collection.
      *
-     * <p>This implementation uses a <em>polynomial rolling hash</em>, which is the
-     * standard approach employed by core Java collection types such as
-     * {@link java.util.List} and {@link java.util.ArrayList}.
+     * <p>The hash code is computed as:
      *
-     * <p>The hash is defined by the polynomial:
      * <pre>
-     *   H = e₀·pⁿ⁻¹ + e₁·pⁿ⁻² + ... + eₙ₋₁
-     * </pre>
-     * where {@code eᵢ} is the hash code of the i-th element, {@code p} is a fixed
-     * prime base (typically {@code 31}), and {@code n} is the number of elements.
-     *
-     * <p>For efficiency, the polynomial is evaluated iteratively as:
-     * <pre>
-     *   H = 0
-     *   H = H * p + e
-     * </pre>
-     * which avoids explicit power computations while producing the same result.
-     *
-     * <p>In concrete terms, the computation follows:
-     * <pre>
-     *   hash = 31 * hash + elementHash
+     * hash = 31 * hash + elementHash
      * </pre>
      *
-     * <p>This technique ensures:
-     * <ul>
-     *   <li><strong>Order sensitivity</strong> — lists with the same elements in
-     *       different orders will (with high probability) produce different hash codes.</li>
-     *   <li><strong>Good hash distribution</strong> — the use of a prime multiplier
-     *       reduces collisions in hash-based data structures.</li>
-     *   <li><strong>Consistency with {@code equals(Object)}</strong> — equal lists
-     *       produce identical hash codes.</li>
-     * </ul>
+     * <p>The computation is order-sensitive and consistent with
+     * {@link #equals(Object)}. {@code null} elements contribute {@code 0}.
      *
-     * <p>{@code null} elements are supported and contribute a hash value of {@code 0}.
-     *
-     * <p>Integer overflow during computation is intentional and permitted.
-     * Hash codes are computed modulo {@code 2^32}, as defined by the Java
-     * Language Specification.
-     *
-     * @return the hash code value for this collection.
+     * @return the hash code value
      */
     @Override
     public int hashCode() {
@@ -266,20 +137,12 @@ public abstract class AbstractCollection<T> implements Collection<T> {
     /**
      * Compares the specified object with this collection for equality.
      *
-     * <p>The result is {@code true} if and only if the specified object is also a
-     * {@link Collection}, has the same size as this collection, and all corresponding
-     * elements in both collections are equal (in order). {@code null} elements are
-     * supported and compared safely using {@link Objects#equals(Object, Object)}.
+     * <p>Returns {@code true} if the given object is also a
+     * {@link Collection}, has the same size, and all corresponding
+     * elements are equal in iteration order.
      *
-     * <p><b>Default Behavior:</b> This is a default {@code equals} implementation
-     * across all collections inheriting from this class. Subclasses that require
-     * higher performance for equality checks may override this method.
-     *
-     * <p><b>API Note:</b> Order of elements matters. Two collections with identical
-     * elements in different orders will be considered unequal.
-     *
-     * @param o the object to be compared for equality with this collection
-     * @return {@code true} if the specified object is equal to this collection
+     * @param o the object to compare
+     * @return {@code true} if this collection is equal to {@code o}
      */
     @Override
     public boolean equals(Object o) {
@@ -297,45 +160,13 @@ public abstract class AbstractCollection<T> implements Collection<T> {
     }
 
     /**
-     * Returns a string representation of this list.
+     * Returns a string representation of this collection.
+     * The returned string consists of the simple runtime class name
+     * followed by the elements enclosed in curly braces ({@code {}}).
+     * Elements are separated by {@code ", "} and appear in iteration order.
+     * For an empty collection, the result is {@code ClassName{}}.
      *
-     * <p>The returned string is intended for diagnostic and debugging purposes
-     * and follows a consistent, human-readable format:</p>
-     *
-     * <pre>
-     * {@code
-     * ClassName{}
-     * ClassName{e1}
-     * ClassName{e1, e2, ..., en}
-     * }
-     * </pre>
-     *
-     * <p><strong>Formatting Rules:</strong>
-     * <ul>
-     *   <li>The simple runtime class name is used as the prefix</li>
-     *   <li>Elements are enclosed in curly braces {@code {}}</li>
-     *   <li>Elements are separated by {@code ", "} (comma and space)</li>
-     *   <li>No trailing delimiter is included</li>
-     * </ul>
-     *
-     * <p><strong>Behavioral Guarantees:</strong>
-     * <ul>
-     *   <li>Returns {@code ClassName{}} for an empty list</li>
-     *   <li>Preserves element iteration order</li>
-     *   <li>Safely represents {@code null} elements if permitted by the list</li>
-     *   <li>Does not expose internal storage structure</li>
-     * </ul>
-     *
-     * <p><strong>Design Notes:</strong>
-     * <ul>
-     *   <li>This implementation relies solely on the public {@link Iterator}
-     *       abstraction rather than internal node or array structures</li>
-     *   <li>The method is side effect free and does not modify list state</li>
-     *   <li>Subclasses automatically inherit correct string formatting without
-     *       additional overrides</li>
-     * </ul>
-     *
-     * @return a string representation of this list
+     * @return a string representation of this collection
      */
     @Override
     public String toString() {

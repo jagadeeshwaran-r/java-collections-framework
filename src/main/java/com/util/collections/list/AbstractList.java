@@ -4,52 +4,26 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * Abstract base class for {@link List} implementations that centralizes
- * validation logic, boundary enforcement, and null-handling policies.
+ * Skeletal implementation of the {@link List} interface.
  *
- * <h2>Purpose</h2>
- * <p>
- * This class consolidates cross-cutting concerns common to all list
- * implementations, including:
- * </p>
- * <ul>
- *   <li>Index boundary validation</li>
- *   <li>Insertion position validation</li>
- *   <li>Nullability enforcement</li>
- *   <li>Element count tracking</li>
- * </ul>
+ * <p>This class provides common validation and bookkeeping logic
+ * shared by all list implementations. It centralizes index boundary
+ * checks, insertion position validation, null-handling policy,
+ * and element count management.
  *
- * <p>
- * Concrete subclasses are responsible exclusively for structural storage,
- * traversal mechanics, and node management.
- * </p>
+ * <p>Concrete subclasses are responsible for the underlying storage
+ * structure and for implementing element access, modification,
+ * and traversal mechanics.
  *
- * <h2>State Ownership</h2>
- * <ul>
- *   <li>{@code count} represents the number of elements currently stored</li>
- *   <li>{@code isNullable} defines whether {@code null} elements are permitted</li>
- * </ul>
+ * <p>Valid element indices are in the range {@code [0, count - 1]}.
+ * Valid insertion indices are in the range {@code [0, count]}.
  *
- * <h2>Index Semantics</h2>
- * <ul>
- *   <li>Valid access indices lie in the range {@code [0, count - 1]}</li>
- *   <li>Valid insertion indices lie in the range {@code [0, count]}</li>
- * </ul>
- *
- * <h2>Design Philosophy</h2>
- * <p>
- * This abstraction enforces correctness through explicit precondition checks
- * rather than duplicating defensive logic in each concrete implementation.
- * Centralizing validation improves consistency, safety, and maintainability.
- * </p>
- *
- * <h2>Thread Safety</h2>
- * <p>
- * This class is <strong>not thread-safe</strong>. External synchronization is
- * required if instances are accessed concurrently.
- * </p>
+ * <p>This class is not thread-safe. If multiple threads access a list
+ * concurrently and at least one thread modifies it, external
+ * synchronization is required.
  *
  * @param <T> the type of elements maintained by this list
+ * @author Jagadeesh Waran
  */
 abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T> {
 
@@ -142,25 +116,15 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
     }
 
     /**
-     * Determines whether this list contains an element equal to the specified value.
+     * Returns {@code true} if this list contains an element
+     * equal to the specified value.
      *
-     * <p>
-     * Equality comparison is performed using {@link Objects#equals(Object, Object)}
-     * to safely support nullable elements when permitted by the list's policy.
-     * </p>
+     * <p>More formally, returns {@code true} if and only if this list
+     * contains at least one element {@code e} such that
+     * {@code Objects.equals(e, val)}.
      *
-     * <h3>Performance Characteristics</h3>
-     * <ul>
-     *   <li>Best case: {@code O(1)}</li>
-     *   <li>Worst case: {@code O(n)}</li>
-     * </ul>
-     *
-     * <p>
-     * This method does not modify the list and preserves all structural invariants.
-     * </p>
-     *
-     * @param val the value whose presence is to be tested
-     * @return {@code true} if an equal element exists; {@code false} otherwise
+     * @param val the value whose presence in this list is to be tested
+     * @return {@code true} if this list contains the specified element
      */
     @Override
     public boolean contains(T val) {
@@ -168,54 +132,16 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
     }
 
     /**
-     * Returns the index of the first occurrence of the specified value in this list,
-     * or {@code -1} if this list does not contain the value.
+     * Returns the index of the first occurrence of the specified element
+     * in this list, or {@code -1} if this list does not contain the element.
      *
-     * <p><strong>Search Semantics:</strong>
-     * This method performs a forward traversal of the list starting from the
-     * logical head (index {@code 0}) and compares each element to the supplied
-     * value using {@link Objects#equals(Object, Object)}. The first index at which
-     * equality is observed is returned immediately.
-     * </p>
+     * <p>More formally, returns the lowest index {@code i} such that
+     * {@code Objects.equals(get(i), v)}, or {@code -1} if there is
+     * no such index.
      *
-     * <p><strong>Equality Contract:</strong>
-     * Equality comparison is delegated to {@link Objects#equals(Object, Object)}
-     * to ensure:
-     * <ul>
-     *   <li>Null-safe comparison when {@code null} values are permitted</li>
-     *   <li>Behavior consistent with {@link #contains(Object)}</li>
-     *   <li>Compliance with standard {@code List} equality semantics</li>
-     * </ul>
-     * </p>
-     *
-     * <p><strong>Behavioral Guarantees:</strong>
-     * <ul>
-     *   <li>Returns the index of the <em>first</em> matching element</li>
-     *   <li>Does not modify the list structure</li>
-     *   <li>Terminates early upon successful match detection</li>
-     * </ul>
-     * </p>
-     *
-     * <p><strong>Performance Characteristics:</strong>
-     * <ul>
-     *   <li>Best case: {@code O(1)} — the element is at the head of the list</li>
-     *   <li>Worst case: {@code O(n)} — the element is absent or located at the tail</li>
-     *   <li>Space complexity: {@code O(1)}</li>
-     * </ul>
-     * </p>
-     *
-     * <p><strong>Design Rationale:</strong>
-     * This implementation is intentionally independent of the underlying storage
-     * strategy and relies solely on the list’s {@link Iterable} contract. This
-     * ensures that all concrete list implementations inherit consistent search
-     * semantics while retaining the freedom to override this method for
-     * storage-specific optimizations.
-     * </p>
-     *
-     * @param v the value to search for, which may be {@code null} if permitted by
-     *          the list's nullability policy
-     * @return the zero-based index of the first matching element, or {@code -1}
-     *         if no such element exists
+     * @param v the element to search for
+     * @return the index of the first occurrence of the specified element,
+     *         or {@code -1} if this list does not contain the element
      */
     @Override
     public int indexOf(T v) {
@@ -253,53 +179,19 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
     }
 
     /**
-     * Appends all elements from the specified {@link Iterable} to the end of this list,
-     * in the order they are provided by the iterable's iterator.
+     * Appends all elements from the specified {@link Iterable}
+     * to the end of this list, in the order returned by its iterator.
      *
-     * <h2>Behavior</h2>
-     * <p>
-     * This method sequentially iterates over the supplied {@code iterable} and delegates
-     * each insertion to {@link #add(Object)}. As a result:
-     * </p>
-     * <ul>
-     *   <li>Element order is preserved</li>
-     *   <li>All validation rules defined by {@code add(T)} are enforced</li>
-     *   <li>Element count is updated incrementally</li>
-     * </ul>
+     * <p>This method iterates over the given {@code iterable} and
+     * adds each element using {@link #add(Object)}. If an exception
+     * occurs while adding an element, elements successfully added
+     * before the exception remain in the list.
      *
-     * <h2>Null Handling</h2>
-     * <p>
-     * If this list does not permit {@code null} elements, encountering a {@code null}
-     * value during iteration will result in an {@link IllegalArgumentException}.
-     * </p>
-     *
-     * <h2>Failure Semantics</h2>
-     * <p>
-     * This operation is <strong>not atomic</strong>. If an exception is thrown while
-     * processing the iterable, elements added prior to the failure will remain
-     * in the list.
-     * </p>
-     *
-     * <h2>Performance Characteristics</h2>
-     * <ul>
-     *   <li>Time Complexity: {@code O(n)} where {@code n} is the number of elements
-     *       in the provided iterable</li>
-     *   <li>Space Complexity: {@code O(1)} excluding storage required by subclasses</li>
-     * </ul>
-     *
-     * <h2>Design Notes</h2>
-     * <ul>
-     *   <li>Delegating to {@link #add(Object)} ensures consistent validation,
-     *       boundary checks, and nullability enforcement</li>
-     *   <li>Concrete subclasses are responsible only for structural insertion</li>
-     *   <li>This method does not attempt to optimize bulk insertion</li>
-     * </ul>
-     *
-     * @param iterable the elements to be appended to this list
-     * @return {@code true} upon successful completion
+     * @param iterable the elements to be added to this list
+     * @return {@code true} if this list was modified
      * @throws NullPointerException if {@code iterable} is {@code null}
      * @throws IllegalArgumentException if a {@code null} element is encountered
-     *                                  and the list does not permit {@code null} values
+     *         and this list does not permit {@code null} values
      */
     @Override
     public boolean addAll(Iterable<T> iterable) {
@@ -313,35 +205,8 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
     /**
      * {@inheritDoc}
      *
-     * <p>
-     * Returns an array containing all elements of this list in proper iteration
-     * order. If the runtime length of the supplied array is insufficient to
-     * hold the elements, a new array of the same runtime component type is
-     * allocated and returned.
-     * </p>
-     *
-     * <p>
-     * If the supplied array has a length greater than the number of elements
-     * in this list, the element immediately following the last list element
-     * is set to {@code null}, in accordance with the
-     * {@link java.util.Collection#toArray(Object[])} contract.
-     * </p>
-     *
-     * <p>
-     * This implementation delegates the full array population logic to
-     * {@link #finishToArray(Object[])}, ensuring that all concrete list
-     * implementations inherit identical, specification-compliant behavior.
-     * </p>
-     *
-     * @param a the array into which the elements of this list are to be stored,
-     *          if it is large enough; otherwise, a new array of the same runtime
-     *          type is allocated for this purpose
-     * @return an array containing the elements of this list
-     *
-     * @implNote
-     * Array conversion logic is centralized in the abstract superclass to
-     * guarantee consistent semantics, ordering, and runtime type preservation
-     * across all concrete list implementations.
+     * <p>This implementation delegates to {@link #finishToArray(Object[])}
+     * to perform the array population logic.
      */
     @Override
     public T[] toArray(T[] a) {
@@ -484,39 +349,14 @@ abstract class AbstractList<T>  extends AbstractCollection<T> implements List<T>
     }
 
     /**
-     * Returns the first element in this list that satisfies the given predicate.
+     * Returns the first element of this list that satisfies the given predicate,
+     * or {@code null} if no such element exists.
      *
-     * <p><strong>Implementation Notes:</strong>
-     * This implementation performs a linear traversal over the list using its
-     * iteration order. The supplied {@code condition} is applied to each element
-     * in sequence, and evaluation short-circuits immediately upon encountering
-     * the first matching element.</p>
+     * <p>This method iterates over the elements in iteration order and applies
+     * the specified predicate to each element until a match is found.
      *
-     * <p><strong>Failure Semantics:</strong>
-     * The method fails fast if the provided predicate is {@code null}, ensuring
-     * that contract violations are detected early and explicitly rather than
-     * resulting in deferred runtime failures.</p>
-     *
-     * <p><strong>Null Semantics:</strong>
-     * <ul>
-     *   <li>If no element satisfies the predicate, {@code null} is returned</li>
-     *   <li>If {@code null} elements are permitted by the list and the predicate
-     *       matches a {@code null} value, {@code null} may also be returned</li>
-     * </ul>
-     * Callers that need to disambiguate these cases must perform additional checks.</p>
-     *
-     * <p><strong>Side Effects:</strong>
-     * This operation is non-structural and does not modify the state, size,
-     * or ordering of the list.</p>
-     *
-     * <p><strong>Performance Characteristics:</strong>
-     * Time Complexity: O(n) in the worst case, where {@code n} is the list size.<br>
-     * Space Complexity: O(1).</p>
-     *
-     * @param condition a non-null predicate used to test elements
-     * @return the first element satisfying the predicate, or {@code null} if no
-     *         such element exists
-     *
+     * @param condition the predicate used to test elements
+     * @return the first matching element, or {@code null} if none match
      * @throws NullPointerException if {@code condition} is {@code null}
      */
     @Override
